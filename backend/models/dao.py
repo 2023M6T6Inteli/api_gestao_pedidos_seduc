@@ -1,3 +1,11 @@
+#Este arquivo define um DAO (Data Access Object), que é um padrão de design utilizado paraabstrair e encapsular o acesso a dados. 
+# O BaseDAO é uma classe base para gerenciar a sessão do banco de dados.
+
+# Gerenciamento de Sessão: A classe gerencia a criação, o commit e o fechamento da sessão do banco de dados. 
+# Isso é importante para garantir que as operações de banco de dados sejam realizadas corretamente e que os recursos sejam liberados após o uso.
+
+# Context Manager: O uso de __enter__ e __exit__ permite que a classe seja usada com o operador with em Python, garantindo que os recursos sejam gerenciados automaticamente.
+
 from models.db_credentials import get_session
 from sqlalchemy.exc import IntegrityError
 

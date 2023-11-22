@@ -1,3 +1,19 @@
+# Este arquivo define fábricas para DAOs específicos, como StudentDAOFactory e CourseDAOFactory.
+
+# Padrão Factory: Este padrão é usado para criar objetos (neste caso, DAOs) sem expor a lógica de criação ao cliente. 
+# Isso ajuda a manter o código mais modular e fácil de manter.
+
+# DAOs Específicos: Embora não mostrado diretamente aqui, presume-se que existam classes como StudentDAO e CourseDAO que estendem 
+# BaseDAO e fornecem funcionalidades específicas para alunos e cursos.
+
+# DAO como um assistente pessoal para lidar com todas as suas interações com um banco de dados. Seu trabalho é gerenciar a conexão 
+# com o banco de dados, executar consultas e operações, e cuidar da logística de acesso aos dados.
+# Relação com Entidades e Modelos: O DAO geralmente trabalha diretamente com as entidades. Quando você quer salvar, atualizar, ler ou deletar
+# informações do banco de dados, o DAO lida com essas tarefas usando entidades.
+
+
+# existe para que você não tenha que construir um StudentDAO toda vez que precisar de um. 
+# Assim como uma fábrica que faz brinquedos para você, a StudentDAOFactory faz StudentDAOs
 class StudentDAOFactory:
     """
     Creates a dao

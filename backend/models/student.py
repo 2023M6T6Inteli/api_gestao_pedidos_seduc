@@ -7,7 +7,7 @@ from models.entities import *
 """ DAO
 ================================================================================
 """
-
+# StudentDAO terá todas as funcionalidades de BaseDAO, como gerenciamento de sessões de banco de dados.
 class StudentDAO(BaseDAO):
 
     def create_student(self, map_):
@@ -83,7 +83,11 @@ class StudentDAO(BaseDAO):
 """ Model
 ================================================================================
 """
+# Esta classe representa o modelo de um estudante em seu sistema. Ela possui atributos como id, ra, name e courses, além de métodos para 
+# manipular esses atributos e para converter os dados do estudante em diferentes formatos, como um dicionário ou JSON.
 
+# O modelo Student é uma representação mais amigável e prática dos dados de um estudante, que pode ser usada em outras partes do seu 
+# aplicativo, como interfaces de usuário, lógica de negócios ou comunicação entre diferentes componentes do sistema.
 class Student:
 
     def __init__(self, id, ra, name):
