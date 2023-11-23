@@ -29,3 +29,67 @@ class CourseDAOFactory:
     def create(session):
         from .course import CourseDAO
         return CourseDAO(session)
+    
+class SchoolDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .school import SchoolDAO
+        return SchoolDAO(session)
+    
+class SupplierDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .supplier import SupplierDAO
+        return SupplierDAO(session)
+    
+class TransporterDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .transporter import TransporterDAO
+        return TransporterDAO(session)
+    
+class EmployeSeducDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .employe_seduc import EmployeSeducDAO
+        return EmployeSeducDAO(session)
+
+class EmployeSchoolDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .employe_school import EmployeSchoolDAO
+        return EmployeSchoolDAO(session)
+
+class EmployeTransporterDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .employe_transporter import EmployeTransporterDAO
+        return EmployeTransporterDAO(session)
+
+class EmployeSupplierDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .employe_supplier import EmployeSupplierDAO
+        return EmployeSupplierDAO(session)
+
+class OrderDAOFactory:
+    """
+    Creates a dao
+    """
+    def create(session):
+        from .order import OrderDAO
+        return OrderDAO(session)

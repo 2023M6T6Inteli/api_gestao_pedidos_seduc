@@ -45,27 +45,36 @@ class SchoolEntity(Base):
     name = Column(String)
     address = Column(String)
     cep = Column(String)
+    cnpj = Column(String)
 
-    employes = relationship("EmployeSchoolEntity", back_populates="school")
+    employes = relationship("EmployeSchoolEntity", backref="school")
+    orders = relationship("OrderEntity", backref="school")
 
 class SupplierEntity(Base):
     __tablename__ = 'suppliers_tb'
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    supplier_name = Column(String)
+    name = Column(String)
+    adress = Column(String)
+    cep = Column(String)
     cnpj = Column(String)
-    rate = Column(Integer)
 
-    employes = relationship("EmployeSupplierEntity", back_populates="supplier")
+    employes = relationship("EmployeSupplierEntity", backref="supplier")
+    transporters = relationship("TransporterEntity", backref="supplier")
+    orders = relationship("OrderEntity", backref="supplier")
 
 class TransporterEntity(Base):
     __tablename__ = 'transporters_tb'
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    supplier_id = Column(String, ForeignKey('suppliers_tb.id'))
     name = Column(String)
+    adress = Column(String)
+    cep = Column(String)
+    cnpj = Column(String)
+    supplier_id = Column(String, ForeignKey('suppliers_tb.id'))
 
-    employes = relationship("EmployeTransporterEntity", back_populates="transporter")
+    employes = relationship("EmployeTransporterEntity", backref="transporter")
+    orders = relationship("OrderEntity", backref="transporter")
 
 class OrderEntity(Base):
     __tablename__ = 'orders_tb'
@@ -126,7 +135,7 @@ class UserEntity(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String)
     cpf = Column(String, unique=True)
-    email = Column(String, unique=True)
+    email = Column(String)
     password = Column(String)
     createdAt = Column(DateTime, default=datetime.utcnow)
     updatedAt = Column(DateTime, onupdate=datetime.utcnow)
@@ -138,6 +147,7 @@ class EmployeSeducEntity(UserEntity):
     id = Column(String, ForeignKey('users_tb.id'), primary_key=True)
     role = Column(String)
     celular = Column(String)
+    orders = relationship("OrderEntity", backref="employe_seduc")
 
 class EmployeSchoolEntity(UserEntity):
     __tablename__ = 'employeschool_tb'
