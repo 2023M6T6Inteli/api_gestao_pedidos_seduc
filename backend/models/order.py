@@ -1,4 +1,9 @@
 import json
+from models.employe_seduc import EmployeSeducDAO
+from models.school import SchoolDAO
+from models.transporter import TransporterDAO
+
+from models.supplier import SupplierDAO
 
 from .factories import *
 from .dao import BaseDAO
@@ -18,13 +23,32 @@ class OrderDAO(BaseDAO):
             nf = map_['nf'],
             nr =map_['nr'],
             shipment_date = map_['shipment_date'],
-            status = map_[Enum(OrderStatus)],
+            status = OrderStatus(map_['status']),
             amount = map_['amount'],
             school_id = map_['school_id'],
             supplier_id = map_['supplier_id'],
             employe_seduc_id = map_['employe_seduc_id'],
+            transporter_id = map_.get('transporter_id')
         )
         return self._session.add(entity)
+    
+    def create_orders(self, orders_data):
+        orders_entities = []
+        for map_ in orders_data:
+            entity = OrderEntity(
+                nf = map_['nf'],
+                nr =map_['nr'],
+                shipment_date = map_['shipment_date'],
+                status = OrderStatus(map_['status']),
+                amount = map_['amount'],
+                school_id = map_['school_id'],
+                supplier_id = map_['supplier_id'],
+                employe_seduc_id = map_['employe_seduc_id'],
+                transporter_id = map_.get('transporter_id')
+            )
+            orders_entities.append(entity)
+
+        self._session.add_all(orders_entities)
 
     ## FAZER ATUALIZAR PEDIDOS DIFERENTES, NOVOS MAPAS?
 
@@ -50,6 +74,10 @@ class OrderDAO(BaseDAO):
             return True
         else:
             return False
+        
+    def find_all(self):
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
@@ -61,51 +89,213 @@ class OrderDAO(BaseDAO):
 
     def find_by_nr(self, nr):
         """
-        Finds an instance by cnr
+        Finds an instance by nr
         """
         entity = self._session.query(OrderEntity).filter(OrderEntity.nr == nr).first()
         if (entity):
             return self._build_model_from_entity(entity)
+    
+
+        
+    """
+    Query para preenchimentos dos feeds ('pedidos' e 'histórico' do usuário employe_Seduc), algumas querys dos outros users podem ser usado na tela do employe_Seduc como filtro.
+    Por exemplo: para filtrar todos pedidos de fornecedor
+    """
+
+    def find_all_entities_by_employe_seduc_id(self, employe_seduc_id):
+        entities = self.find_all_entities_by_employe_seduc_id(employe_seduc_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    def find_all_entities_by_multiple_status(self, status):
+        entities = self.find_all_entities_by_multiple_status(status)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    def find_all_entities_by_status(self, status):
+        entities = self.find_all_entities_by_status(status)
+        if (entities):
+            return self._build_models_from_entities(entities)
+    
+    """
+    Query para preenchimentos dos feeds dos suppliers
+    """
+
+    def find_all_entities_by_multiple_status_and_supplier_id(self, status, supplier_id):
+        entities = self.find_all_entities_by_multiple_status_and_supplier_id(status, supplier_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    def find_all_entities_by_supplier_id(self, supplier_id):
+        entities = self.find_all_entities_by_supplier_id(supplier_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+    
+    """
+    Query para preenchimentos dos feeds das escolas
+    """
+
+    def find_all_entities_by_multiple_status_and_school_id(self, status, school_id):
+        entities = self.find_all_entities_by_multiple_status_and_school_id(status, school_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    def find_all_entities_by_school_id(self, school_id):
+        entities = self.find_all_entities_by_school_id(school_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    """
+    Query para preenchimentos dos feeds dos transporters
+    """
+
+    def find_all_entities_by_multiple_status_and_transporter_id(self, status, transporter_id):
+        entities = self.find_all_entities_by_multiple_status_and_transporter_id(status, transporter_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    def find_all_entities_by_transporter_id(self, transporter_id):
+        entities = self.find_all_entities_by_transporter_id(transporter_id)
+        if (entities):
+            return self._build_models_from_entities(entities)
+        
+    
 
     # Private methods
     # -------------------------------------------------------------------------
 
+
+    def find_all_entity(self):
+        return self._session.query(OrderEntity).all()
+        
     def _find_entity_by_id(self, id):
         return self._session.query(OrderEntity).filter(OrderEntity.id == id).first()
     
     def _find_entity_by_nr(self, nr):
         return self._session.query(OrderEntity).filter(OrderEntity.nr == nr).first()
     
-    def _find_entity_by_supplier_id(self, supplier_id):
-        return self._session.query(OrderEntity).filter(OrderEntity.supplier_id == supplier_id).first()
+    def find_supplier_by_id(self, supplier_id):
+        supplier_dao = SupplierDAO()
+        if not supplier_id:
+            return None
+        with SupplierDAO() as supplier_dao:
+            supplier_entity = supplier_dao.find_by_id(supplier_id)
+            return supplier_entity
+        
+    def find_school_by_id(self, school_id):
+        school_dao = SchoolDAO()
+        if not school_id:
+            return None
+        with SchoolDAO() as school_dao:
+            school_entity = school_dao.find_by_id(school_id)
+            return school_entity
+        
+    def find_transporter_by_id(self, transporter_id):
+        transporter_dao = TransporterDAO()
+        if not transporter_id:
+            return None
+        with TransporterDAO() as transporter_dao:
+            transporter_entity = transporter_dao.find_by_id(transporter_id)
+            return transporter_entity
+        
     
-    def _find_entity_by_school_id(self, school_id):
-        return self._session.query(OrderEntity).filter(OrderEntity.school_id == school_id).first()
+    def find_employe_seduc_by_id(self, employe_seduc_id):
+        employe_seduc_dao = EmployeSeducDAO()
+        if not employe_seduc_id:
+            return None
+        with EmployeSeducDAO() as employe_seduc_dao:
+            employe_seduc_entity = employe_seduc_dao.find_by_id(employe_seduc_id)
+            return employe_seduc_entity
+        
     
-    def _find_entity_by_transporter_id(self, transporter_id):
-        return self._session.query(OrderEntity).filter(OrderEntity.transporter_id == transporter_id).first()
+
+
+    """
+    Query para preenchimentos dos feeds ('pedidos' e 'histórico' do usuário employe_Seduc), algumas querys dos outros users podem ser usado na tela do employe_Seduc como filtro.
+    Por exemplo: para filtrar todos pedidos de fornecedor
+    """
+    def find_all_entity(self):
+        return self._session.query(OrderEntity).all()
     
-    def _find_entity_by_employe_seduc_id(self, employe_seduc_id):
-        return self._session.query(OrderEntity).filter(OrderEntity.employe_seduc_id == employe_seduc_id).first()
+    def find_all_entities_by_status(self, status):
+        return self._session.query(OrderEntity).filter(OrderEntity.status == status).all()
+    
+    def find_all_entities_by_multiple_status(self, status):
+        return self._session.query(OrderEntity).filter(OrderEntity.status.in_(status)).all()
+    
+    def find_all_entities_by_employe_seduc_id(self, employe_seduc_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.employe_seduc_id == employe_seduc_id).all()
+    
+    """
+    Query para preenchimentos dos feeds dos suppliers
+    """
+    def find_all_entities_by_multiple_status_and_supplier_id(self, status, supplier_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.status.in_(status), OrderEntity.supplier_id == supplier_id).all()
+    
+    def find_all_entities_by_supplier_id(self, supplier_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.supplier_id == supplier_id).all()
+       
+
+    """
+    Query para preenchimentos dos feeds das escolas
+    """
+
+    
+    def find_all_entities_by_school_id(self, school_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.school_id == school_id).all()
+    
+    def find_all_entities_by_multiple_status_and_school_id(self, status, school_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.status.in_(status), OrderEntity.school_id == school_id).all()
+    
+    """
+    Query para preenchimentos dos feeds dos transporters
+    """
+    
+    def find_all_entities_by_transporter_id(self, transporter_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.transporter_id == transporter_id).all()
+    
+    def find_all_entities_by_multiple_status_and_transporter_id(self, status, transporter_id):
+        return self._session.query(OrderEntity).filter(OrderEntity.status.in_(status), OrderEntity.transporter_id == transporter_id).all()
 
 
     # se receber campos vazios e tiver o campo na entidade o que rola
     def _build_model_from_entity(self, entity):
         """
-        Build a Student model out of an entity
+        Build a Orders model out of an entity
         """
         order = Order(
             id = entity.id,
             nf = entity.nf,
             nr = entity.nr,
             shipment_date = entity.shipment_date,
-            status = entity.Enum(OrderStatus),
+            status = entity.status,
             amount = entity.amount,
             supplier_id = entity.supplier_id,
             school_id = entity.school_id,
             transporter_id = entity.transporter_id,
             employe_seduc_id = entity.employe_seduc_id
         )
+        return order
+    
+    def _build_models_from_entities(self, entities):
+        """
+        Build a list of Orders models out of a list of entities
+        """
+        orders = []
+        for entity in entities:
+            order = self._build_model_from_entity(entity)
+            orders.append(order)
+        return orders
+    
+    def _build_model_from_entity_with_dependencies(self, entity):
+        """
+        Build a Orders model out of an entity with all dependencies loaded
+        """
+        order = self._build_model_from_entity(entity)
+        order.employe_seduc = self.find_employe_seduc_by_id(entity.employe_seduc_id)
+        order.transporter = self.find_transporter_by_id(entity.transporter_id)
+        order.supplier = self.find_supplier_by_id(entity.supplier_id)
+        order.school = self.find_school_by_id(entity.school_id)
         return order
 
 """ Model
@@ -181,8 +371,16 @@ class Order:
     def add_transporter_id(self, transporter_id):
         self._transporter_id = transporter_id
 
+    def employe_seduc_id(self):
+        return self._employe_seduc_id
+    
+    def add_employe_seduc_id(self, employe_seduc_id):
+        self._employe_seduc_id = employe_seduc_id
+
+
     def jsonify(self, indent=2):
         map_ = self.to_map()
+        map_["status"] = self.status().to_dict()
         return json.dumps(map_, indent=indent)
 
     def to_map(self):
@@ -191,12 +389,12 @@ class Order:
             "nf": self.nf(),
             "nr": self.nr(),
             "shipment_date": self.shipment_date(),
-            "status": self.status(),
-            "amount": self.amount()
-            # "supplier_id": self.supplier_id(),
-            # "school_id": self.school_id(),
-            # "transporter_id": self.transporter_id(),
-            # "employe_seduc_id": self.employe_seduc_id()
+            "status": self.status().to_dict(),
+            "amount": self.amount(),
+            "supplier_id": self.supplier_id(),
+            "school_id": self.school_id(),
+            "transporter_id": self.transporter_id(),
+            "employe_seduc_id": self.employe_seduc_id()
         }
     
     def employe_seduc(self, session=None, commit_on_exit=True, close_on_exit=True):

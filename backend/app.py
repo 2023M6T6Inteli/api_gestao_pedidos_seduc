@@ -10,6 +10,7 @@ from controllers.employe_school import employe_school_blueprint
 from controllers.supplier import supplier_blueprint
 from controllers.school import school_blueprint
 from controllers.transporter import transporter_blueprint
+from controllers.order import order_blueprint
 
 
 app = Flask(__name__)
@@ -22,6 +23,7 @@ app.register_blueprint(employe_school_blueprint)
 app.register_blueprint(supplier_blueprint)
 app.register_blueprint(school_blueprint)
 app.register_blueprint(transporter_blueprint)
+app.register_blueprint(order_blueprint)
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 

@@ -6,3 +6,6 @@ class OrderStatus(enum.Enum):
     Em_Transito = "Em Trânsito"
     Entregue = "Entregue"
     Avaliado = "Avaliado"
+    
+    def to_dict(self):
+        return {"value": self.value}
