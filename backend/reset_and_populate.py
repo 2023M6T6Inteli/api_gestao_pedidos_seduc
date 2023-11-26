@@ -16,5 +16,35 @@ def main():
         with StudentDAO() as mng:
             mng.create_student(map)
 
+    for map in SUPPLIERS_MAPS:
+        with SupplierDAO() as mng:
+            mng.create_supplier(map)
+
+    for map in TRANSPORTERS_MAPS:
+        with TransporterDAO() as mng:
+            mng.create_transporter(map)
+    
+    for map in SCHOOLS_MAPS:
+        with SchoolDAO() as mng:
+            mng.create_school(map)
+
+    for map in EMPLOYES_SEDUC_MAPS:
+        with EmployeSeducDAO() as mng:
+            mng.create_employe_seduc(map)
+
+    for map in EMPLOYES_TRANSPORTER_MAPS:
+        with EmployeTransporterDAO() as mng:
+            mng.create_employe_transporter(map)
+
+    for map in EMPLOYES_SCHOOL_MAPS:
+        with EmployeSchoolDAO() as mng:
+            mng.create_employe_school(map)
+
+    for map in EMPLOYES_SUPPLIER_MAPS:
+        with EmployeSupplierDAO() as mng:
+            mng.create_employe_supplier(map)
+    
+
+
 if (__name__=="__main__"):
     main()

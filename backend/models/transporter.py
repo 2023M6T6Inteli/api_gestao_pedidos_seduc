@@ -1,4 +1,5 @@
 import json
+import logging
 
 from .factories import *
 from .dao import BaseDAO
@@ -32,6 +33,21 @@ class TransporterDAO(BaseDAO):
         )
         return self._session.add(entity)
     
+    def create_transporters(self, transporters_data):
+        transporters_entities = []
+        for map_ in transporters_data:
+            entity = TransporterEntity(
+                name=map_['name'],
+                address=map_['address'],
+                cep=map_['cep'],
+                cnpj=map_['cnpj']
+            )
+            transporters_entities.append(entity)
+
+        self._session.add_all(transporters_entities)
+    
+    # Entender como passo o supplier para ele??
+
     def update_transporter(self, id, map_):
         """
         Update a transporter in the Database
@@ -40,7 +56,6 @@ class TransporterDAO(BaseDAO):
         if entity:
             for key, value in map_.items():
                 setattr(entity, key, value)
-            self._session.commit()
             return self._build_model_from_entity(entity)
         else:
             return None
@@ -52,16 +67,29 @@ class TransporterDAO(BaseDAO):
         entity = self._find_entity_by_id(id)
         if entity:
             self._session.delete(entity)
-            self._session.commit()
             return True
         else:
             return False
+        
+    def delete_all_transporters(self):
+        entities = self.find_all_entity()
+        for entity in entities:
+            self._session.delete(entity)
+        return True
+    
+    def find_all(self):
+        logging.error(f"entrou find_all dao")
+        entities = self.find_all_entity()
+        logging.error(f"passou find_all dao")
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
         Finds an instance by id
         """
+        logging.error(f"entrou find_by_id dao")
         entity = self._find_entity_by_id(id)
+        logging.error(f"passou find_by_id dao", entity)
         if (entity):
             return self._build_model_from_entity(entity)
 
@@ -76,6 +104,9 @@ class TransporterDAO(BaseDAO):
     # Private methods
     # -------------------------------------------------------------------------
 
+    def find_all_entity(self):
+        return self._session.query(TransporterEntity).all()
+
     def _find_entity_by_id(self, id):
         return self._session.query(TransporterEntity).filter(TransporterEntity.id == id).first()
 
@@ -89,8 +120,17 @@ class TransporterDAO(BaseDAO):
             address = entity.address,
             cep = entity.cep,
             cnpj = entity.cnpj
+            # Crio outra _build_ que contenha os relacionamentos?
+            # employes = entity.employes,
+            # orders = entity.orders
         )
         return transporter
+    
+    def _build_models_from_entities(self, entities):
+        transporters = []
+        for entity in entities:
+            transporters.append(self._build_model_from_entity(entity))
+        return transporters
 
 """ Model
 ================================================================================
@@ -108,7 +148,7 @@ class Transporter:
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
     def name(self):
@@ -143,7 +183,7 @@ class Transporter:
         return {
             "id": self.id(),
             "name": self.name(),
-            "adress": self.address(),
+            "address": self.address(),
             "cep": self.cep(),
             "cnpj": self.cnpj()
         }
@@ -169,6 +209,7 @@ class Transporter:
             employe_dao = EmployeTransporterDAOFactory.create(dao.session())
 
             # A list of the models of the associated entities
+            # Esse método transforma uma Entity em um Model. Isso é importante porque não podemos deixar um Entity ir pra camada de Negócios
             self._employes = [employe_dao._build_model_from_entity(e) for e in associated_entities]
         return self._employes
 

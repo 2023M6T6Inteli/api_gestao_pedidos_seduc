@@ -14,6 +14,9 @@
 
 # existe para que você não tenha que construir um StudentDAO toda vez que precisar de um. 
 # Assim como uma fábrica que faz brinquedos para você, a StudentDAOFactory faz StudentDAOs
+
+# uma session é usada para gerenciar transações de banco de dados. 
+# Ela representa uma "área de trabalho" para todas as operações de banco de dados que você realizará.
 class StudentDAOFactory:
     """
     Creates a dao

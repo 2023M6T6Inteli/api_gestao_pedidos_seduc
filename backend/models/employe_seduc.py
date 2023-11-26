@@ -1,4 +1,5 @@
 import json
+import logging
 
 from .factories import *
 from .dao import BaseDAO
@@ -11,12 +12,9 @@ from models.entities import *
 class EmployeSeducDAO(BaseDAO):
 
     def create_employe_seduc(self, map_):
-        """
-        Add a employe_seduc to the Database
-        """
         # Cria uma entidade estudante
         employe_seduc_entity = EmployeSeducEntity(
-            id = map_['id'],
+
             name = map_['name'],
             cpf = map_['cpf'],
             email = map_['email'],
@@ -27,43 +25,34 @@ class EmployeSeducDAO(BaseDAO):
 
         return self._session.add(employe_seduc_entity)
     
-    def update_employe_seduc(self, map_):
-        """
-        Update a employe_seduc to the Database
-        """
+    def update_employe_seduc(self, id, map_):
+        logging.error(f"entrou update_employe_seduc dao")
         entity = self._find_entity_by_id(id)
         if entity:
             for key, value in map_.items():
                 setattr(entity, key, value)
-                self._session.commit()
             return self._build_model_from_entity(entity)
         else:
             return None
         
     def delete_employe_seduc(self, id):
-        """
-        Delete a employe_seduc to the Database
-        """
         entity = self._find_entity_by_id(id)
         if entity:
             self._session.delete(entity)
-            self._session.commit()
             return True
         else:
             return False
 
+    def find_all(self):
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
+
     def find_by_id(self, id):
-        """
-        Finds an instance by id
-        """
         entity = self._find_entity_by_id(id)
         if (entity):
             return self._build_model_from_entity(entity)
 
     def find_by_cpf(self, cpf):
-        """
-        Finds an instance by cpf
-        """
         entity = self._find_entity_by_cpf(cpf)
         if (entity):
             return self._build_model_from_entity(entity)
@@ -71,11 +60,15 @@ class EmployeSeducDAO(BaseDAO):
     # Private methods
     # -------------------------------------------------------------------------
 
+    def find_all_entity(self):
+        return self._session.query(EmployeSeducEntity).all()
+
     def _find_entity_by_id(self, id):
         return self._session.query(EmployeSeducEntity).filter(EmployeSeducEntity.id == id).first()
 
     def _find_entity_by_cpf(self, cpf):
-        return self._session.query(EmployeSeducEntity).filter(EmployeSeducEntity.cpf == cpf).first()
+        result = self._session.query(EmployeSeducEntity).filter(EmployeSeducEntity.cpf == cpf).first()
+        return result
 
     def _build_model_from_entity(self, entity):
         """
@@ -91,9 +84,15 @@ class EmployeSeducDAO(BaseDAO):
             celular = entity.celular,
         )
         return employe_seduc
-
-
-
+    
+    def _build_models_from_entities(self, entities):
+        """
+        Build a list of EmployeSeduc models out of a list of entities
+        """
+        employe_seducs = []
+        for entity in entities:
+            employe_seducs.append(self._build_model_from_entity(entity))
+        return employe_seducs
 
 """ Model
 ================================================================================
@@ -107,52 +106,61 @@ class EmployeSeduc:
 
     def __init__(self, id, name, cpf, email, password, role, celular):
             self._id = id
-            self.name = name
-            self.cpf = cpf
-            self.email = email
-            self.password = password
-            self.role = role
-            self.celular = celular
+            self._name = name
+            self._cpf = cpf
+            self._email = email
+            self._password = password
+            self._role = role
+            self._celular = celular
 
-
+    @property
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
+    @property
     def name(self):
         return self._name
 
     def add_name(self, name):
         self._name = name
 
+    @property
     def cpf(self):
         return self._cpf
 
     def add_cpf(self, cpf):
         self._cpf = cpf
 
+    @property
     def email(self):
         return self._email
     
     def add_email(self, email):
         self._email = email
-    
+
+    @property
     def password(self):
         return self._password
     
     def add_password(self, password):
         self._password = password
     
+    @property
     def role(self):
         return self._role
     
     def add_role(self, role):
         self._role = role
     
+    @property
     def celular(self):
         return self._celular
+    
+    def add_celular(self, celular):
+        self._celular = celular
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
@@ -160,12 +168,12 @@ class EmployeSeduc:
 
     def to_map(self):
         return {
-            "id": self.id(),
-            "name": self.name(),
-            "cpf": self.cpf(),
-            "email": self.email(),
-            "password": self.password(),
-            "role": self.role(),
-            "celular": self.celular(),
+            "id": self._id,
+            "name": self._name,
+            "cpf": self._cpf,
+            "email": self._email,
+            "password": self._password,
+            "role": self._role,
+            "celular": self._celular,
         }
     

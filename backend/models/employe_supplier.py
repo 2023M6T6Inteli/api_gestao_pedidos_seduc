@@ -1,4 +1,4 @@
-import jsoncour
+import json
 
 from .factories import *
 from .dao import BaseDAO
@@ -16,7 +16,7 @@ class EmployeSupplierDAO(BaseDAO):
         """
         # Cria uma entidade estudante
         employe_supplier_entity = EmployeSupplierEntity(
-            id = map_['id'],
+
             name = map_['name'],
             cpf = map_['cpf'],
             email = map_['email'],
@@ -24,15 +24,15 @@ class EmployeSupplierDAO(BaseDAO):
             supplier_id = map_['supplier_id'],
         )
 
-        # Adiciona os cursos
-        supplier_id = int(map_["supplier_id"])
-        supplier_entity = self._find_supplier_entity_by_id(supplier_id)
-        employe_supplier_entity.suppliers = [supplier_entity]
+        # # Adiciona os cursos
+        # supplier_id = int(map_["supplier_id"])
+        # supplier_entity = self._find_supplier_entity_by_id(supplier_id)
+        # employe_supplier_entity.suppliers = [supplier_entity]
 
         # Adiciona a sessão para que seja inserido ao banco de daos
         return self._session.add(employe_supplier_entity)
     
-    def update_employe_supplier(self, map_):
+    def update_employe_supplier(self, id, map_):
         """
         Update a employe_supplier to the Database
         """
@@ -40,7 +40,6 @@ class EmployeSupplierDAO(BaseDAO):
         if entity:
             for key, value in map_.items():
                 setattr(entity, key, value)
-                self._session.commit()
             return self._build_model_from_entity(entity)
         else:
             return None
@@ -52,10 +51,13 @@ class EmployeSupplierDAO(BaseDAO):
         entity = self._find_entity_by_id(id)
         if entity:
             self._session.delete(entity)
-            self._session.commit()
             return True
         else:
             return False
+
+    def find_all(self):
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
@@ -75,6 +77,9 @@ class EmployeSupplierDAO(BaseDAO):
 
     # Private methods
     # -------------------------------------------------------------------------
+
+    def find_all_entity(self):
+        return self._session.query(EmployeSupplierEntity).all()
 
     def _find_entity_by_id(self, id):
         return self._session.query(EmployeSupplierEntity).filter(EmployeSupplierEntity.id == id).first()
@@ -96,6 +101,13 @@ class EmployeSupplierDAO(BaseDAO):
         )
         return employe_supplier
 
+    def _build_models_from_entities(self, entities):
+        employe_suppliers = []
+        for entity in entities:
+            employe_supplier = self._build_model_from_entity(entity)
+            employe_suppliers.append(employe_supplier)
+        return employe_suppliers
+
     def _map_to_supplier_entities(self, supplier_ids):
         """
         Converts the courses ids in the map to their entities
@@ -107,9 +119,9 @@ class EmployeSupplierDAO(BaseDAO):
             entities.append(entity)
         return entities
     
-    def _find_supplier_entity_by_id(self, id):
+    def _find_supplier_entity_by_id(self, supplier_id):
         supplier_dao = SupplierDAOFactory.create(self.session())
-        return supplier_dao._find_entity_by_id(id)
+        return supplier_dao._find_entity_by_id(supplier_id)
 
 
 """ Model
@@ -124,45 +136,50 @@ class EmployeSupplier:
 
     def __init__(self, id, name, cpf, email, password, supplier_id):
             self._id = id
-            self.name = name
-            self.cpf = cpf
-            self.email = email
-            self.password = password
-            self.supplier_id = supplier_id
+            self._name = name
+            self._cpf = cpf
+            self._email = email
+            self._password = password
+            self._supplier_id = supplier_id
 
-
+    @property
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
+    @property
     def name(self):
         return self._name
 
     def add_name(self, name):
         self._name = name
 
+    @property
     def cpf(self):
         return self._cpf
 
     def add_cpf(self, cpf):
         self._cpf = cpf
 
+    @property
     def email(self):
         return self._email
     
     def add_email(self, email):
         self._email = email
     
+    @property
     def password(self):
         return self._password
     
     def add_password(self, password):
         self._password = password
 
-    def supplier_id(self):
-        return self._supplier_id
+    # @property
+    # def supplier_id(self):
+    #     return self._supplier_id
 
     def add_supplier_id(self, supplier_id):
         self._supplier_id = supplier_id
@@ -173,34 +190,35 @@ class EmployeSupplier:
 
     def to_map(self):
         return {
-            "id": self.id(),
-            "name": self.name(),
-            "cpf": self.cpf(),
-            "email": self.email(),
-            "password": self.password(),
-            "supplier_id": self.supplier_id(),
+            "id": self._id,
+            "name": self._name,
+            "cpf": self._cpf,
+            "email": self._email,
+            "password": self._password,
+            "supplier_id": self._supplier_id,
         }
     
-    def suppliers(self, session=None, commit_on_exit=True, close_on_exit=True):
+    @property
+    def supplier_id(self, session=None, commit_on_exit=True, close_on_exit=True):
         """
-        Finds the associated models in the database
+        Finds the associated model in the database
         """
-        if (self._suppliers):
-            return self._suppliers
+        if (self._supplier_id):
+            return self._supplier_id
 
         if (not self.id()):
             raise Exception("You need an id to get dependencies")
 
         with EmployeSupplierDAO(session, commit_on_exit, close_on_exit) as dao:
             # Obtain the entity of this model
-            entity = dao._find_entity_by_id(self.id())
+            entity = dao._find_supplier_entity_by_id(self.id())
 
             # Finds the associated entities
-            associated_entities = entity.suppliers
+            associated_entities = entity.supplier_id
 
             # Use the factory to get a manager of the associated entities
             supplier_dao = SupplierDAOFactory.create(dao.session())
 
             # A list of the models of the associated entities
             self._suppliers = [supplier_dao._build_model_from_entity(e) for e in associated_entities]
-        return self._suppliers
+        return self._supplier_id

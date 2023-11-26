@@ -1,4 +1,5 @@
 import json
+import logging
 
 from .factories import *
 from .dao import BaseDAO
@@ -16,27 +17,54 @@ class EmployeTransporterDAO(BaseDAO):
         """
         # Cria uma entidade estudante
         employe_transporter_entity = EmployeTransporterEntity(
-            id = map_['id'],
+
             name = map_['name'],
             cpf = map_['cpf'],
             email = map_['email'],
             password = map_['password'],
             transporter_id = map_['transporter_id'],
+            celular = map_['celular'],
         )
-
-        # Adiciona os cursos
-        transporter_id = int(map_["transporter_id"])
-        transporter_entity = self._find_transporter_entity_by_id(transporter_id)
-        employe_transporter_entity.transporters = [transporter_entity]
 
         # Adiciona a sessão para que seja inserido ao banco de daos
         return self._session.add(employe_transporter_entity)
+    
+    def update_employe_transporter(self, id, map_):
+        """
+        Update a employe_transporter to the Database
+        """
+        entity = self._find_entity_by_id(id)
+        if entity:
+            for key, value in map_.items():
+                setattr(entity, key, value)
+            return self._build_model_from_entity(entity)
+        else:
+            return None
+        
+    def delete_employe_transporter(self, id):  
+        """
+        Delete a employe_transporter to the Database
+        """
+        entity = self._find_entity_by_id(id)
+        if entity:
+            self._session.delete(entity)
+            return True
+        else:
+            return False
+
+    def find_all(self):
+        logging.error(f"entrou find_all dao")
+        entities = self.find_all_entity()
+        logging.error(f"passou find_all dao")
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
         Finds an instance by id
         """
+        logging.error(f"entrou find_by_id dao")
         entity = self._find_entity_by_id(id)
+        logging.error(f"passou find_by_id dao", entity)
         if (entity):
             return self._build_model_from_entity(entity)
 
@@ -51,7 +79,12 @@ class EmployeTransporterDAO(BaseDAO):
     # Private methods
     # -------------------------------------------------------------------------
 
+    def find_all_entity(self):
+        logging.error(f"entrou find_all_entyty")
+        return self._session.query(EmployeTransporterEntity).all()
+
     def _find_entity_by_id(self, id):
+        logging.error(f"entrou find_entity_by_id")
         return self._session.query(EmployeTransporterEntity).filter(EmployeTransporterEntity.id == id).first()
 
     def _find_entity_by_cpf(self, cpf):
@@ -67,9 +100,19 @@ class EmployeTransporterDAO(BaseDAO):
             cpf = entity.cpf,
             email = entity.email,
             password = entity.password,
+            celular = entity.celular,
             transporter_id = entity.transporter_id,
         )
+        logging.error(f"passou build_model_from_entity,  employe_transporter: {employe_transporter}")
         return employe_transporter
+    
+    def _build_models_from_entities(self, entities):
+        employe_transporters = []
+        for entity in entities:
+            employe_transporter = self._build_model_from_entity(entity)
+            employe_transporters.append(employe_transporter)
+        logging.error(f"passou build_models_from_entities,  employe_transporters: {employe_transporters}")
+        return employe_transporters
 
     def _map_to_transporter_entities(self, transporter_ids):
         """
@@ -97,47 +140,63 @@ class EmployeTransporterDAO(BaseDAO):
 # aplicativo, como interfaces de usuário, lógica de negócios ou comunicação entre diferentes componentes do sistema.
 class EmployeTransporter:
 
-    def __init__(self, id, name, cpf, email, password, transporter_id):
+    def __init__(self, id, name, cpf, email, password, celular, transporter_id):
             self._id = id
-            self.name = name
-            self.cpf = cpf
-            self.email = email
-            self.password = password
-            self.transporter_id = transporter_id
+            self._name = name
+            self._cpf = cpf
+            self._email = email
+            self._password = password
+            self._celular = celular
+            self._transporter_id = transporter_id
 
-
+    @property
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
+    @property
     def name(self):
         return self._name
 
     def add_name(self, name):
         self._name = name
 
+    @property
     def cpf(self):
         return self._cpf
 
     def add_cpf(self, cpf):
         self._cpf = cpf
 
+    @property
     def email(self):
         return self._email
     
     def add_email(self, email):
         self._email = email
     
+    @property
     def password(self):
         return self._password
     
     def add_password(self, password):
         self._password = password
 
+    @property
+    def celular(self):
+        return self._celular
+    
+    def add_celular(self, celular):
+        self._celular = celular
+
+    @property
     def transporter_id(self):
         return self._transporter_id
+    
+    def add_transporter_id(self, transporter_id):    
+        self._transporter_id = transporter_id
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
@@ -145,34 +204,38 @@ class EmployeTransporter:
 
     def to_map(self):
         return {
-            "id": self.id(),
-            "name": self.name(),
-            "cpf": self.cpf(),
-            "email": self.email(),
-            "password": self.password(),
-            "transporter_id": self.transporter_id(),
+            "id": self._id,
+            "name": self._name,
+            "cpf": self._cpf,
+            "email": self._email,
+            "password": self._password,
+            "celular": self._celular,
+            "transporter_id": self._transporter_id,
         }
     
-    def transporters(self, session=None, commit_on_exit=True, close_on_exit=True):
-        """
-        Finds the associated models in the database
-        """
-        if (self._transporters):
-            return self._transporters
 
-        if (not self.id()):
-            raise Exception("You need an id to get dependencies")
 
-        with EmployeTransporterDAO(session, commit_on_exit, close_on_exit) as dao:
-            # Obtain the entity of this model
-            entity = dao._find_entity_by_id(self.id())
+    
+    # def transporters(self, session=None, commit_on_exit=True, close_on_exit=True):
+    #     """
+    #     Finds the associated models in the database
+    #     """
+    #     if (self._transporters):
+    #         return self._transporters
 
-            # Finds the associated entities
-            associated_entities = entity.transporters
+    #     if (not self.id()):
+    #         raise Exception("You need an id to get dependencies")
 
-            # Use the factory to get a manager of the associated entities
-            transporter_dao = TransporterDAOFactory.create(dao.session())
+    #     with EmployeTransporterDAO(session, commit_on_exit, close_on_exit) as dao:
+    #         # Obtain the entity of this model
+    #         entity = dao._find_entity_by_id(self.id())
 
-            # A list of the models of the associated entities
-            self._transporters = [transporter_dao._build_model_from_entity(e) for e in associated_entities]
-        return self._transporters
+    #         # Finds the associated entities
+    #         associated_entities = entity.transporters
+
+    #         # Use the factory to get a manager of the associated entities
+    #         transporter_dao = TransporterDAOFactory.create(dao.session())
+
+    #         # A list of the models of the associated entities
+    #         self._transporters = [transporter_dao._build_model_from_entity(e) for e in associated_entities]
+    #     return self._transporters

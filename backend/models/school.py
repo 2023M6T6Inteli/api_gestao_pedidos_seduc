@@ -1,14 +1,15 @@
 import json
+import logging
 
 from .factories import *
 from .dao import BaseDAO
 from models.entities import *
 
+
+# SERVIÇO CHAMA 
 """ DAO
 ================================================================================
 """
-
-
 
 class SchoolDAO(BaseDAO):
 
@@ -16,13 +17,31 @@ class SchoolDAO(BaseDAO):
         """
         Add a school to the Database
         """
+        logging.error(f"entrou create_school dao")
         entity = SchoolEntity(
             name = map_['name'],
             address = map_['address'],
             cep = map_['cep'],
             cnpj = map_['cnpj']
         )
-        return self._session.add(entity)
+        logging.error(entity)
+        return logging.error(f"return dao"), self._session.add(entity)
+    
+    def create_schools(self, schools_data):
+        """
+        Add multiple schools to the Database
+        """
+        schools_entities = []
+        for map_ in schools_data:
+            entity = SchoolEntity(
+                name=map_['name'],
+                address=map_['address'],
+                cep=map_['cep'],
+                cnpj=map_['cnpj']
+            )
+            schools_entities.append(entity)
+
+        self._session.add_all(schools_entities)
     
     def update_school(self, id, map_):
         """
@@ -32,7 +51,6 @@ class SchoolDAO(BaseDAO):
         if entity:
             for key, value in map_.items():
                 setattr(entity, key, value)
-            self._session.commit()
             return self._build_model_from_entity(entity)
         else:
             return None
@@ -44,10 +62,19 @@ class SchoolDAO(BaseDAO):
         entity = self._find_entity_by_id(id)
         if entity:
             self._session.delete(entity)
-            self._session.commit()
             return True
         else:
             return False
+        
+    def delete_all_schools(self):
+        entities = self.find_all_entity()
+        for entity in entities:
+            self._session.delete(entity)
+        return True
+
+    def find_all(self):
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
@@ -68,6 +95,9 @@ class SchoolDAO(BaseDAO):
     # Private methods
     # -------------------------------------------------------------------------
 
+    def find_all_entity(self):
+        return self._session.query(SchoolEntity).all()
+
     def _find_entity_by_id(self, id):
         return self._session.query(SchoolEntity).filter(SchoolEntity.id == id).first()
 
@@ -81,8 +111,17 @@ class SchoolDAO(BaseDAO):
             address = entity.address,
             cep = entity.cep,
             cnpj = entity.cnpj
+            # Crio outra _build_ que contenha os relacionamentos?
+            # employes = entity.employes,
+            # orders = entity.orders
         )
         return school
+    
+    def _build_models_from_entities(self, entities):
+        schools = []
+        for entity in entities:
+            schools.append(self._build_model_from_entity(entity))
+        return schools
 
 """ Model
 ================================================================================
@@ -97,30 +136,35 @@ class School:
         self._cep = cep
         self._cnpj = cnpj
 
+    @property
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
+    @property
     def name(self):
         return self._name
 
     def add_name(self, name):
         self._name = name
 
+    @property
     def cnpj(self):
         return self._cnpj
 
     def add_cnpj(self, cnpj):
         self._cnpj = cnpj
 
+    @property
     def address(self):
         return self._address
     
     def add_address(self, address):
         self._address = address
     
+    @property
     def cep(self):
         return self._cep
     
@@ -133,57 +177,58 @@ class School:
 
     def to_map(self):
         return {
-            "id": self.id(),
-            "name": self.name(),
-            "adress": self.address(),
-            "cep": self.cep(),
-            "cnpj": self.cnpj()
+            "id": self._id,
+            "name": self._name,
+            "address": self._address,
+            "cep": self._cep,
+            "cnpj": self._cnpj
         }
     
-    def employes(self, session=None, commit_on_exit=True, close_on_exit=True):
-        """
-        Finds the associated employes in the database
-        """
-        if hasattr(self, '_employes'):
-            return self._employes
+    # def employes(self, session=None, commit_on_exit=True, close_on_exit=True):
+    #     """
+    #     Finds the associated employes in the database
+    #     """
+    #     if hasattr(self, '_employes'):
+    #         return self._employes
 
-        if not self.id():
-            raise Exception("You need an id to get dependencies")
+    #     if not self.id():
+    #         raise Exception("You need an id to get dependencies")
 
-        with SchoolDAO(session, commit_on_exit, close_on_exit) as dao:
-            # Obtain the entity of this model
-            entity = dao._find_entity_by_id(self.id())
+    #     with SchoolDAO(session, commit_on_exit, close_on_exit) as dao:
+    #         # Obtain the entity of this model
+    #         entity = dao._find_entity_by_id(self.id())
 
-            # Finds the associated entities
-            associated_entities = entity.employes
+    #         # Finds the associated entities
+    #         associated_entities = entity.employes
 
-            # Use the factory to get a manager of the associated entities
-            employe_dao = EmployeSchoolDAOFactory.create(dao.session())
+    #         # Use the factory to get a manager of the associated entities
+    #         employe_dao = EmployeSchoolDAOFactory.create(dao.session())
 
-            # A list of the models of the associated entities
-            self._employes = [employe_dao._build_model_from_entity(e) for e in associated_entities]
-        return self._employes
+    #         # A list of the models of the associated entities
+    #         self._employes = [employe_dao._build_model_from_entity(e) for e in associated_entities]
+    #     return self._employes
 
-    def orders(self, session=None, commit_on_exit=True, close_on_exit=True):
-        """
-        Finds the associated orders in the database
-        """
-        if hasattr(self, '_orders'):
-            return self._orders
+    # def orders(self, session=None, commit_on_exit=True, close_on_exit=True):
+    #     """
+    #     Finds the associated orders in the database
+    #     """
+    #     if hasattr(self, '_orders'):
+    #         return self._orders
 
-        if not self.id():
-            raise Exception("You need an id to get dependencies")
+    #     if not self.id():
+    #         raise Exception("You need an id to get dependencies")
 
-        with SchoolDAO(session, commit_on_exit, close_on_exit) as dao:
-            # Obtain the entity of this model
-            entity = dao._find_entity_by_id(self.id())
+    #     with SchoolDAO(session, commit_on_exit, close_on_exit) as dao:
+    #         # Obtain the entity of this model
+    #         entity = dao._find_entity_by_id(self.id())
 
-            # Finds the associated entities
-            associated_entities = entity.orders
+    #         # Finds the associated entities
+    #         associated_entities = entity.orders
 
-            # Use the factory to get a manager of the associated entities
-            order_dao = OrderDAOFactory.create(dao.session())
+    #         # Use the factory to get a manager of the associated entities
+    #         order_dao = OrderDAOFactory.create(dao.session())
 
-            # A list of the models of the associated entities
-            self._orders = [order_dao._build_model_from_entity(e) for e in associated_entities]
-        return self._orders
+    #         # A list of the models of the associated entities
+    #         # Esse método transforma uma Entity em um Model. Isso é importante porque não podemos deixar um Entity ir pra camada de Negócios
+    #         self._orders = [order_dao._build_model_from_entity(e) for e in associated_entities]
+    #     return self._orders

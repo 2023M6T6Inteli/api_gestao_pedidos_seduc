@@ -9,11 +9,9 @@ class AcademicServices:
         return True
 
     def create_course(self, course_map):
-
         with CourseDAO() as dao:
             dao.create_course(course_map)
         return True
 
 
-        
 

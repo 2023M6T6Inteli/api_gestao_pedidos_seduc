@@ -11,12 +11,8 @@ from models.entities import *
 class EmployeSchoolDAO(BaseDAO):
 
     def create_employe_school(self, map_):
-        """
-        Add a employe_school to the Database
-        """
         # Cria uma entidade estudante
         employe_school_entity = EmployeSchoolEntity(
-            id = map_['id'],
             name = map_['name'],
             cpf = map_['cpf'],
             email = map_['email'],
@@ -24,39 +20,29 @@ class EmployeSchoolDAO(BaseDAO):
             school_id = map_['school_id'],
         )
 
-        # Adiciona os cursos
-        school_id = int(map_["school_id"])
-        school_entity = self._find_school_entity_by_id(school_id)
-        employe_school_entity.schools = [school_entity]
-
         # Adiciona a sessão para que seja inserido ao banco de daos
         return self._session.add(employe_school_entity)
     
-    def update_employe_school(self, map_):
-        """
-        Update a employe_school to the Database
-        """
+    def update_employe_school(self, id, map_):
         entity = self._find_entity_by_id(id)
         if entity:
             for key, value in map_.items():
                 setattr(entity, key, value)
-                self._session.commit()
             return self._build_model_from_entity(entity)
         else:
             return None
         
     def delete_employe_school(self, id):
-        """
-        Delete a employe_school to the Database
-        """
         entity = self._find_entity_by_id(id)
         if entity:
             self._session.delete(entity)
-            self._session.commit()
             return True
         else:
             return False
         
+    def find_all(self):
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
@@ -77,6 +63,9 @@ class EmployeSchoolDAO(BaseDAO):
     # Private methods
     # -------------------------------------------------------------------------
 
+    def find_all_entity(self):
+        return self._session.query(EmployeSchoolEntity).all()
+
     def _find_entity_by_id(self, id):
         return self._session.query(EmployeSchoolEntity).filter(EmployeSchoolEntity.id == id).first()
 
@@ -96,6 +85,15 @@ class EmployeSchoolDAO(BaseDAO):
             school_id = entity.school_id,
         )
         return employe_school
+    
+    def _build_models_from_entities(self, entities):
+        """
+        Build a list of EmployeSchool models out of a list of entities
+        """
+        employe_schools = []
+        for entity in entities:
+            employe_schools.append(self._build_model_from_entity(entity))
+        return employe_schools
 
     def _map_to_school_entities(self, school_ids):
         """
@@ -125,43 +123,48 @@ class EmployeSchool:
 
     def __init__(self, id, name, cpf, email, password, school_id):
             self._id = id
-            self.name = name
-            self.cpf = cpf
-            self.email = email
-            self.password = password
-            self.school_id = school_id
+            self._name = name
+            self._cpf = cpf
+            self._email = email
+            self._password = password
+            self._school_id = school_id
 
-
+    @property
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
+    @property
     def name(self):
         return self._name
 
     def add_name(self, name):
         self._name = name
 
+    @property
     def cpf(self):
         return self._cpf
 
     def add_cpf(self, cpf):
         self._cpf = cpf
 
+    @property
     def email(self):
         return self._email
     
     def add_email(self, email):
         self._email = email
     
+    @property
     def password(self):
         return self._password
     
     def add_password(self, password):
         self._password = password
 
+    @property
     def school_id(self):
         return self._school_id
     
@@ -174,12 +177,12 @@ class EmployeSchool:
 
     def to_map(self):
         return {
-            "id": self.id(),
-            "name": self.name(),
-            "cpf": self.cpf(),
-            "email": self.email(),
-            "password": self.password(),
-            "school_id": self.school_id(),
+            "id": self._id,
+            "name": self._name,
+            "cpf": self._cpf,
+            "email": self._email,
+            "password": self._password,
+            "school_id": self._school_id,
         }
     
     def schools(self, session=None, commit_on_exit=True, close_on_exit=True):

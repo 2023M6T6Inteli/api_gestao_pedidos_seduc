@@ -23,6 +23,19 @@ class SupplierDAO(BaseDAO):
             cnpj = map_['cnpj']
         )
         return self._session.add(entity)
+    
+    def create_suppliers(self, suppliers_data):
+        suppliers_entities = []
+        for map_ in suppliers_data:
+            entity = SupplierEntity(
+                name=map_['name'],
+                address=map_['address'],
+                cep=map_['cep'],
+                cnpj=map_['cnpj']
+            )
+            suppliers_entities.append(entity)
+
+        self._session.add_all(suppliers_entities)
 
     def update_supplier(self, id, map_):
         """
@@ -32,7 +45,6 @@ class SupplierDAO(BaseDAO):
         if entity:
             for key, value in map_.items():
                 setattr(entity, key, value)
-            self._session.commit()
             return self._build_model_from_entity(entity)
         else:
             return None
@@ -44,10 +56,19 @@ class SupplierDAO(BaseDAO):
         entity = self._find_entity_by_id(id)
         if entity:
             self._session.delete(entity)
-            self._session.commit()
             return True
         else:
             return False
+        
+    def delete_all_suppliers(self):
+        entities = self.find_all_entity()
+        for entity in entities:
+            self._session.delete(entity)
+        return True
+    
+    def find_all(self):
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
@@ -68,6 +89,9 @@ class SupplierDAO(BaseDAO):
     # Private methods
     # -------------------------------------------------------------------------
 
+    def find_all_entity(self):
+        return self._session.query(SupplierEntity).all()
+
     def _find_entity_by_id(self, id):
         return self._session.query(SupplierEntity).filter(SupplierEntity.id == id).first()
 
@@ -81,8 +105,17 @@ class SupplierDAO(BaseDAO):
             address = entity.address,
             cep = entity.cep,
             cnpj = entity.cnpj
+            # Crio outra _build_ que contenha os relacionamentos? Ou isso fica pro serviço?
+            # employes = entity.employes,
+            # orders = entity.orders
         )
         return supplier
+    
+    def _build_models_from_entities(self, entities):
+        suppliers = []
+        for entity in entities:
+            suppliers.append(self._build_model_from_entity(entity))
+        return suppliers
 
 """ Model
 ================================================================================
@@ -100,7 +133,7 @@ class Supplier:
     def id(self):
         return self._id
 
-    def add_id(self):
+    def add_id(self, id):
         self._id = id
 
     def name(self):
@@ -134,11 +167,12 @@ class Supplier:
         map_ = self.to_map()
         return json.dumps(map_, indent=indent)
 
+    # Função para serializar o estado do objeto para formatos que podem ser facilmente transmitidos ou armazenados, como JSON,
     def to_map(self):
         return {
             "id": self.id(),
             "name": self.name(),
-            "adress": self.address(),
+            "address": self.address(),
             "cep": self.cep(),
             "cnpj": self.cnpj()
         }
@@ -164,6 +198,7 @@ class Supplier:
             employe_dao = EmployeSupplierDAOFactory.create(dao.session())
 
             # A list of the models of the associated entities
+            # Esse método transforma uma Entity em um Model. Isso é importante porque não podemos deixar um Entity ir pra camada de Negócios
             self._employes = [employe_dao._build_model_from_entity(e) for e in associated_entities]
         return self._employes
 

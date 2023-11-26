@@ -21,7 +21,7 @@ class StudentDAO(BaseDAO):
         )
 
         # Adiciona os cursos
-        course_id = int(map_["course_id"])
+        course_id = int(map_.get("course_id", 1))
         course_entity = self._find_course_entity_by_id(course_id)
         student_entity.courses = [course_entity]
 
@@ -119,10 +119,12 @@ class Student:
         return json.dumps(map_, indent=indent)
 
     def to_map(self):
+
         return {
             "id": self.id(),
             "ra": self.ra(),
-            "name": self.name()
+            "name": self.name(),
+            # "courses": [course.to_map() for course in self.courses()]
         }
     
     def courses(self, session=None, commit_on_exit=True, close_on_exit=True):
