@@ -1,4 +1,5 @@
 import logging
+from models import order
 from models import employe_seduc
 
 
@@ -62,3 +63,22 @@ class EmployeSeducServices:
             logging.error(f"Erro ao buscar empregado por cpf: {e}")
             return None
         
+#Preenchimento das páginas
+
+    def find_all_orders_by_status(self, status):
+        try:
+            with order.OrderDAO() as dao:
+                return dao.find_all_orders_by_status(status)
+        except Exception as e:
+            logging.error(f"Erro ao buscar order por status: {e}")
+            return None
+
+    def find_all_orders_by_multiple_status(self, status):
+        logging.error(f"entrou no find_all_orders_by_multiple_status employe seduc service")
+        try:
+            with order.OrderDAO() as dao:
+                logging.error(f"entrou no with orders find_all_orders_by_multiple_status employe seduc service")
+                return dao.find_all_orders_by_multiple_status(status)
+        except Exception as e:
+            logging.error(f"Erro ao buscar orders por status: {e}")
+            return None

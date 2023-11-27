@@ -88,4 +88,42 @@ def find_employe_seduc_by_id(id):
     except Exception as e:
         logging.error(f"Erro ao buscar empregado por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+    
+
+@employe_seduc_blueprint.route('/orders', methods=['GET'])
+def find_orders_activate():
+    logging.debug("Iniciando busca de todos os orders ativos.")
+    try:
+        orders = employe_seduc_services.find_all_orders_by_multiple_status(["Criado", "Confirmado", "Em Trânsito"])
+        logging.debug("Passou try controller.")
+        if orders:
+            # Converte cada modelo Order em um dicionário
+            logging.debug("Passou if orders, controllers.")
+            orders_maps = [order.to_map() for order in orders]
+            # Converte a lista de dicionários em JSON
+            return jsonify(orders_maps), 200
+        else:
+            return {"status": "not found"}, 404
+    except Exception as e:
+        logging.error(f"Erro ao buscar orders ativos: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+    
+@employe_seduc_blueprint.route('/history', methods=['GET'])
+def find_orders_delivered():
+    logging.debug("Iniciando busca de todos os orders inativos.")
+    try:
+        orders = employe_seduc_services.find_all_orders_by_multiple_status(["Entregue", "Avaliado"])
+        logging.debug("Passou try controller.")
+        if orders:
+            # Converte cada modelo Order em um dicionário
+            logging.debug("Passou if orders, controllers.")
+            orders_maps = [order.to_map() for order in orders]
+            # Converte a lista de dicionários em JSON
+            return jsonify(orders_maps), 200
+        else:
+            return {"status": "not found"}, 404
+    except Exception as e:
+        logging.error(f"Erro ao buscar orders ativos: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+                               
 

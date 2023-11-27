@@ -62,3 +62,7 @@ class EmployeSchoolServices:
             logging.error(f"Erro ao buscar empregado por cpf: {e}")
             return None
         
+
+""" PREENCHIMENTOS FEEDS
+================================================================================
+"""

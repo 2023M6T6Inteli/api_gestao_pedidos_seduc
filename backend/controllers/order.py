@@ -98,3 +98,4 @@ def find_all_orders():
     except Exception as e:
         logging.error(f"Erro ao buscar fornecedors: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
+    

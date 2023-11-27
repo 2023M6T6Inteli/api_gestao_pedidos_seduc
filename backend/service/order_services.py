@@ -76,6 +76,16 @@ class OrderServices:
         except Exception as e:
             logging.error(f"Erro ao buscar order por id: {e}")
             return None
+        
+
+    def get_details_by_id(self, id):
+        try:
+            with order.OrderDAO() as dao:
+                return dao.get_details_by_id(id)
+        except Exception as e:
+            logging.error(f"Erro ao buscar details order por id: {e}")
+            return None
+        
 
     # def find_by_cnpj(self, cnpj):
     #     try:
