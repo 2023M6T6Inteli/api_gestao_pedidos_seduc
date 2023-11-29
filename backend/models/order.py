@@ -1,3 +1,46 @@
+
+"""
+Classes e Seus Papéis
+OrderDAO (Data Access Object):
+
+Papel: Interage diretamente com o banco de dados. Possui métodos para criar, atualizar, deletar e buscar pedidos (orders).
+Funcionamento: Cada método manipula a entidade OrderEntity, que representa a tabela de pedidos no banco de dados. Por exemplo, create_order cria um novo pedido, find_by_id busca um pedido pelo ID, etc.
+OrderEntity:
+
+Papel: Representa a estrutura de dados da tabela de pedidos no banco de dados.
+Funcionamento: Define as colunas da tabela como atributos da classe. Cada instância de OrderEntity corresponde a uma linha na tabela de pedidos.
+Order:
+
+Papel: Representa um modelo de negócio de pedido, usado na lógica da aplicação.
+Funcionamento: Armazena informações de um pedido e pode incluir métodos para processamento de negócios ou transformação de dados (como conversão para JSON).
+SupplierDAO, SchoolDAO, TransporterDAO, EmployeSeducDAO:
+
+Papel: Semelhante ao OrderDAO, mas para outras entidades como fornecedores, escolas, transportadoras e funcionários da SEDUC.
+Funcionamento: Cada DAO gerencia operações de banco de dados para sua respectiva entidade.
+Interações Entre Classes
+Quando OrderDAO precisa de informações sobre fornecedores, escolas, transportadoras ou funcionários da SEDUC, ele usa os respectivos DAOs. Por exemplo, get_supplier em OrderDAO usa SupplierDAO para buscar informações de um fornecedor.
+
+Os métodos em OrderDAO, como create_order ou find_by_id, criam ou recuperam instâncias de OrderEntity do banco de dados. Eles então podem construir um modelo Order a partir destas entidades para uso na lógica de negócios da aplicação.
+
+Papel dos Getters e Setters
+Getters: São métodos usados para obter o valor de um atributo de um objeto. Por exemplo, order.id() é um getter que retorna o ID do pedido.
+Setters: São métodos usados para definir ou atualizar o valor de um atributo. Por exemplo, order.add_id(123) é um setter que define o ID do pedido como 123.
+Imagine que você tem uma caixa (objeto) com itens dentro (atributos). Um getter é como perguntar "O que está dentro da caixa?". Um setter é como dizer "Coloque este item na caixa".
+
+Simplificando com Exemplo
+Criação de um Pedido:
+
+O usuário da aplicação decide criar um novo pedido.
+A aplicação recebe os dados do pedido e os passa para OrderDAO.create_order.
+OrderDAO cria uma nova instância de OrderEntity com esses dados e a salva no banco de dados.
+Busca de um Pedido:
+
+O usuário quer ver detalhes de um pedido específico.
+A aplicação pede a OrderDAO para encontrar o pedido pelo ID usando find_by_id.
+OrderDAO recupera a OrderEntity correspondente do banco de dados.
+OrderDAO constrói um modelo Order a partir da entidade e retorna para a aplicação, talvez após convertê-lo para JSON.
+Cada classe e método tem um papel específico, trabalhando juntos para gerenciar a lógica de negócios e interações com o banco de dados.
+"""
 import json
 import logging
 from models.employe_seduc import EmployeSeducDAO
@@ -9,6 +52,7 @@ from models.supplier import SupplierDAO
 from .factories import *
 from .dao import BaseDAO
 from models.entities import *
+from sqlalchemy.orm import joinedload
 
 """ DAO
 ================================================================================
@@ -23,7 +67,8 @@ class OrderDAO(BaseDAO):
         entity = OrderEntity(
             nf = map_['nf'],
             nr =map_['nr'],
-            shipment_date = map_['shipment_date'],
+            purchase_date = map_['purchase_date'],
+            delivery_date = map_.get('delivery_date'),
             status = OrderStatus(map_['status']),
             amount = map_['amount'],
             school_id = map_['school_id'],
@@ -39,7 +84,8 @@ class OrderDAO(BaseDAO):
             entity = OrderEntity(
                 nf = map_['nf'],
                 nr =map_['nr'],
-                shipment_date = map_['shipment_date'],
+                purchase_date = map_['purchase_date'],
+                delivery_date = map_.get('delivery_date'),
                 status = OrderStatus(map_['status']),
                 amount = map_['amount'],
                 school_id = map_['school_id'],
@@ -76,9 +122,19 @@ class OrderDAO(BaseDAO):
         else:
             return False
         
+    # def find_all(self):
+    #     entities = self.find_all_entity()
+    #     return self._build_models_from_entities(entities)
+
     def find_all(self):
-        entities = self.find_all_entity()
-        return self._build_models_from_entities(entities)
+        try:
+            logging.debug("entrou find_All na model orderDAO.")
+            explain_output, entities = self.find_all_entity()  # Desempacotando os dois retornos
+            logging.debug("passou entities e explain na model orderDAO.")
+            return self._build_models_from_entities(entities), explain_output
+        except Exception as e:
+            logging.error(f"Erro na model find_all orderDAO: {e}")
+            raise e
 
     def find_by_id(self, id):
         """
@@ -86,6 +142,7 @@ class OrderDAO(BaseDAO):
         """
         entity = self._find_entity_by_id(id)
         if (entity):
+            logging.debug("construindo models.")
             return self._build_model_from_entity(entity)
         
     def find_by_id_with_dependencies(self, id):
@@ -104,7 +161,13 @@ class OrderDAO(BaseDAO):
         if (entity):
             return self._build_model_from_entity(entity)
     
-        
+
+##############################################################################################################
+
+ ###### PREENCHIMENTO DA PÁGINAS DE PEDIDOS E HISTÓRICO DE PEDIDOS ######
+
+##############################################################################################################
+
     """
     Query para preenchimentos dos feeds ('pedidos' e 'histórico' do usuário employe_Seduc), algumas querys dos outros users podem ser usado na tela do employe_Seduc como filtro.
     Por exemplo: para filtrar todos pedidos de fornecedor
@@ -175,11 +238,39 @@ class OrderDAO(BaseDAO):
     # -------------------------------------------------------------------------
 
 
-    def find_all_entity(self):
-        return self._session.query(OrderEntity).all()
         
+    # def _find_entity_by_id(self, id):
+    #     return self._session.query(OrderEntity).filter(OrderEntity.id == id).first()
     def _find_entity_by_id(self, id):
-        return self._session.query(OrderEntity).filter(OrderEntity.id == id).first()
+        try:
+            logging.debug("entrou find_All_entity na model order.")
+            # Cria a consulta SQLAlchemy
+            query = self._session.query(OrderEntity).filter(OrderEntity.id == id)
+            logging.debug("passou query na model order.")
+            # Obtém a representação em string da consulta com EXPLAIN
+            explain_query = str(query.statement.compile(dialect=self._session.bind.dialect, compile_kwargs={"literal_binds": True}))
+            logging.error(f"explain_query: {explain_query}")
+            # Executar EXPLAIN na consulta
+            # explain_result = self._session.execute(f"EXPLAIN {explain_query}")
+            # logging.error(f"explain_result: {explain_result}")
+            # Criar uma lista para armazenar os resultados do EXPLAIN
+            # explain_output = []
+            # # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
+            # for row in explain_result:
+            #     explain_output.append(row)
+            # # Executar a consulta original e retornar os resultados do EXPLAIN para análise
+            result = query.first()
+            if result:
+                logging.info(f"Entidade encontrada com ID {id}")
+            else:
+                logging.warning(f"Nenhuma entidade encontrada com ID {id}")
+            # logging.error(f"explain_output: {explain_output}")
+            # Se você quiser retornar também os resultados da consulta original,
+            # descomente a linha abaixo e ajuste conforme necessário.
+            return result
+        except Exception as e:
+            logging.error(f"Erro na model find_all_entity order: {e}")
+            raise e
     
     def _find_entity_by_nr(self, nr):
         return self._session.query(OrderEntity).filter(OrderEntity.nr == nr).first()
@@ -220,8 +311,55 @@ class OrderDAO(BaseDAO):
     Query para preenchimentos dos feeds ('pedidos' e 'histórico' do usuário employe_Seduc), algumas querys dos outros users podem ser usado na tela do employe_Seduc como filtro.
     Por exemplo: para filtrar todos pedidos de fornecedor
     """
+    # def find_all_entity(self):
+    #     return self._session.query(OrderEntity).all()
+
+    # def find_all_entity(self):
+    #     return self._session.query(OrderEntity)\
+    #         .filter(OrderEntity.id == id)\
+    #         .options(joinedload(OrderEntity.supplier))\
+    #         .options(joinedload(OrderEntity.school))\
+    #         .options(joinedload(OrderEntity.transporter))\
+    #         .first()
+    #     # return self._session.query(OrderEntity).all()
+
     def find_all_entity(self):
-        return self._session.query(OrderEntity).all()
+        try:
+            logging.debug("entrou find_All_entity na model order.")
+            # Cria a consulta SQLAlchemy
+            query = self._session.query(OrderEntity)
+            logging.debug("passou query na model order.")
+            logging.error(f"query: {query}")
+
+            # Converte a consulta SQLAlchemy em uma string SQL
+            sql = str(query.statement.compile(dialect=self._session.bind.dialect))
+
+            logging.error(f"sql: {sql}")
+
+
+            # Executar EXPLAIN na consulta
+            explain_result = self._session.execute(f"EXPLAIN {sql}")
+
+            logging.error(f"explain_result: {explain_result}")
+
+            # Criar uma lista para armazenar os resultados do EXPLAIN
+            explain_output = []
+
+            
+
+            # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
+            for row in explain_result:
+                explain_output.append(row)
+
+            # Retorna os resultados do EXPLAIN para análise
+            # return explain_output
+            logging.error(f"explain_output: {explain_output}")
+            # Se você quiser retornar também os resultados da consulta original,
+            # descomente a linha abaixo e ajuste conforme necessário.
+            return explain_output, query.all()
+        except Exception as e:
+            logging.error(f"Erro na model find_all_entity order: {e}")
+            raise e
     
     def find_all_entities_by_status(self, status):
         return self._session.query(OrderEntity).filter(OrderEntity.status == status).all()
@@ -268,15 +406,17 @@ class OrderDAO(BaseDAO):
         """
         Build a Orders model out of an entity
         """
+        logging.error(f"começou queries supplier, transporter...")
         supplier = self.get_supplier(entity.supplier_id)
         school = self.get_school(entity.school_id)
         transporter = self.get_transporter(entity.transporter_id)
-
+        logging.error(f"passou queries supplier, transporter...")
         order = Order(
             id = entity.id,
             nf = entity.nf,
             nr = entity.nr,
-            shipment_date = entity.shipment_date,
+            purchase_date = entity.purchase_date,
+            delivery_date = entity.delivery_date,
             status = entity.status,
             amount = entity.amount,
             supplier = supplier,
@@ -289,6 +429,7 @@ class OrderDAO(BaseDAO):
             # transporter_id = entity.transporter_id,
             # employe_seduc_id = entity.employe_seduc_id
         )
+        logging.error(f"construiu model.")
         return order
     
     def _build_models_from_entities(self, entities):
@@ -318,11 +459,12 @@ class OrderDAO(BaseDAO):
 
 class Order:
 
-    def __init__(self, id, nf, nr, shipment_date, status, amount, supplier, school, transporter, employe_seduc_id):
+    def __init__(self, id, nf, nr, purchase_date, delivery_date, status, amount, supplier, school, transporter, employe_seduc_id):
         self._id = id
         self._nf = nf
         self._nr = nr
-        self._shipment_date = shipment_date
+        self._purchase_date = purchase_date
+        self._delivery_date = delivery_date
         self._status = status
         self._amount = amount
         self._supplier = supplier
@@ -353,11 +495,17 @@ class Order:
     def add_nr(self, nr):
         self._nr = nr
     
-    def shipment_date(self):
-        return self._shipment_date
+    def purchase_date(self):
+        return self._purchase_date
     
-    def add_shipment_date(self, shipment_date):
-        self._shipment_date = shipment_date
+    def add_purchase_date(self, purchase_date):
+        self._purchase_date = purchase_date
+
+    def delivery_date(self):
+        return self._delivery_date
+    
+    def add_delivery_date(self, delivery_date):
+        self._delivery_date = delivery_date
     
     def status(self):
         return self._status
@@ -411,9 +559,12 @@ class Order:
         for key, value in map_.items():
             if isinstance(value, datetime):
                 map_[key] = value.isoformat()
-        return json.dumps(map_, indent=indent)
+            elif isinstance(value, str):
+                map_[key] = value.encode('utf-8').decode('utf-8')
+        return json.dumps(map_, indent=indent, ensure_ascii=False)
 
     def to_map(self):
+        logging.error(f"entrou no map")
         supplier_map = self._supplier.to_map() if self._supplier else None
         school_map = self._school.to_map() if self._school else None
         transporter_map = self._transporter.to_map() if self._transporter else None
@@ -421,7 +572,8 @@ class Order:
             "id": self.id(),
             "nf": self.nf(),
             "nr": self.nr(),
-            "shipment_date": self.shipment_date(),
+            "purchase_date": self.purchase_date(),
+            "delivery_date": self.delivery_date(),
             "status": self.status().to_dict(),
             "amount": self.amount(),
             "supplier": supplier_map,

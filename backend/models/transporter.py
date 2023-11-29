@@ -73,18 +73,18 @@ class TransporterDAO(BaseDAO):
         return True
     
     def find_all(self):
-        logging.error(f"entrou find_all dao")
+        #logging.error(f"entrou find_all dao")
         entities = self.find_all_entity()
-        logging.error(f"passou find_all dao")
+        #logging.error(f"passou find_all dao")
         return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
         Finds an instance by id
         """
-        logging.error(f"entrou find_by_id dao")
+        #logging.error(f"entrou find_by_id dao")
         entity = self._find_entity_by_id(id)
-        logging.error(f"passou find_by_id dao", entity)
+        #logging.error(f"passou find_by_id dao", entity)
         if (entity):
             return self._build_model_from_entity(entity)
 

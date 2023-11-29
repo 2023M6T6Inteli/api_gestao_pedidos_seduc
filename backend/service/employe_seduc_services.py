@@ -11,10 +11,10 @@ class EmployeSeducServices:
                 dao.create_employe_seduc(employe_seduc_map)
             return True
         except (ValueError, TypeError) as e:
-            logging.error(f"Erro de dados ao criar empregado: {e}")
+            #logging.error(f"Erro de dados ao criar empregado: {e}")
             return False
         except Exception as e:
-            logging.error(f"Erro inesperado ao criar empregado: {e}")
+            #logging.error(f"Erro inesperado ao criar empregado: {e}")
             return False
 
     def update_employe_seduc(id, employe_seduc_map):
@@ -23,10 +23,10 @@ class EmployeSeducServices:
                 dao.update_employe_seduc(id, employe_seduc_map)
             return True
         except (ValueError, TypeError) as e:
-            logging.error(f"Erro de dados ao atualizar empregado: {e}")
+            #logging.error(f"Erro de dados ao atualizar empregado: {e}")
             return False
         except Exception as e:
-            logging.error(f"Erro inesperado ao atualizar empregado: {e}")
+            #logging.error(f"Erro inesperado ao atualizar empregado: {e}")
             return False
 
     def delete_employe_seduc(id):
@@ -35,7 +35,7 @@ class EmployeSeducServices:
                 dao.delete_employe_seduc(id)
             return True
         except Exception as e:
-            logging.error(f"Erro ao deletar empregado: {e}")
+            #logging.error(f"Erro ao deletar empregado: {e}")
             return False
 
     def find_all(self):
@@ -44,7 +44,7 @@ class EmployeSeducServices:
                 result = dao.find_all()
             return result
         except Exception as e:
-            logging.error(f"Erro ao buscar todos os empregados: {e}")
+            #logging.error(f"Erro ao buscar todos os empregados: {e}")
             return []
 
     def find_by_id(self, id):
@@ -52,7 +52,7 @@ class EmployeSeducServices:
             with employe_seduc.EmployeSeducDAO() as dao:
                 return dao.find_by_id(id)
         except Exception as e:
-            logging.error(f"Erro ao buscar empregado por id: {e}")
+            #logging.error(f"Erro ao buscar empregado por id: {e}")
             return None
 
     def find_by_cpf(self, cpf):
@@ -60,17 +60,21 @@ class EmployeSeducServices:
             with employe_seduc.EmployeSeducDAO() as dao:
                 return dao.find_by_cpf(cpf)
         except Exception as e:
-            logging.error(f"Erro ao buscar empregado por cpf: {e}")
+            #logging.error(f"Erro ao buscar empregado por cpf: {e}")
             return None
         
-#Preenchimento das páginas
+##############################################################################################################
+
+ ###### PREENCHIMENTO DA PÁGINAS DE PEDIDOS E HISTÓRICO DE PEDIDOS ######
+
+##############################################################################################################
 
     def find_all_orders_by_status(self, status):
         try:
             with order.OrderDAO() as dao:
                 return dao.find_all_orders_by_status(status)
         except Exception as e:
-            logging.error(f"Erro ao buscar order por status: {e}")
+            #logging.error(f"Erro ao buscar order por status: {e}")
             return None
 
     def find_all_orders_by_multiple_status(self, status):

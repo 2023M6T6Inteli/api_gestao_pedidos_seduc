@@ -15,10 +15,10 @@ def create_order():
         success = OrderServices.create_order(order_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar empregado: {e}")
+        #logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -29,10 +29,10 @@ def create_orders():
         success = OrderServices.create_orders(orders_data)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar fornecedores: {e}")
+        #logging.error(f"Erro ao criar fornecedores: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @order_blueprint.route('/update_order/<int:id>', methods=['PUT'])
@@ -42,10 +42,10 @@ def update_order(id):
         success = OrderServices.update_order(id, order_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao atualizar fornecedor: {e}")
+        #logging.error(f"Erro ao atualizar fornecedor: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @order_blueprint.route('/delete_order/<int:id>', methods=['DELETE'])
@@ -54,7 +54,7 @@ def delete_order(id):
         success = OrderServices.delete_order(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        logging.error(f"Erro ao deletar fornecedor: {e}")
+        #logging.error(f"Erro ao deletar fornecedor: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @order_blueprint.route('/find_order_by_cnpj/<string:cnpj>', methods=['GET'])
@@ -66,7 +66,7 @@ def find_order_by_cnpj(cnpj):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar fornecedor por CNPJ: {e}")
+        #logging.error(f"Erro ao buscar fornecedor por CNPJ: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @order_blueprint.route('/find_order_by_id/<int:id>', methods=['GET'])
@@ -74,13 +74,32 @@ def find_order_by_id(id):
     try:
         order = order_services.find_by_id(id)
         if order:
+            logging.error(f"chegou jsonfy")
             return order.jsonify(), 200
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar fornecedor por ID: {e}")
+        #logging.error(f"Erro ao buscar fornecedor por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
+
+
+# @order_blueprint.route('/find_all_orders', methods=['GET'])
+# def find_all_orders():
+#     try:
+#         logging.debug("Iniciando busca de todas fornecedors.")
+#         orders = order_services.find_all()
+#         if orders:
+#             # Converte cada modelo Order em um dicionário
+#             orders_maps = [order.to_map() for order in orders]
+#             # Converte a lista de dicionários em JSON
+#             return jsonify(orders_maps), 200
+            
+#         else:
+#             return {"status": "not found"}, 404
+#     except Exception as e:
+#         #logging.error(f"Erro ao buscar fornecedors: {e}")
+#         return jsonify({"status": "error", "message": str(e)}), 500
 
 @order_blueprint.route('/find_all_orders', methods=['GET'])
 def find_all_orders():
@@ -88,14 +107,10 @@ def find_all_orders():
         logging.debug("Iniciando busca de todas fornecedors.")
         orders = order_services.find_all()
         if orders:
-            # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]
-            # Converte a lista de dicionários em JSON
             return jsonify(orders_maps), 200
-            
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar fornecedors: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     

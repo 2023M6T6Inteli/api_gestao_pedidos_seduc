@@ -85,7 +85,8 @@ class OrderEntity(Base):
     transporter_id = Column(Integer, ForeignKey('transporters_tb.id'))
     nf = Column(String(30), nullable=True)
     nr = Column(String(30), nullable=True)
-    shipment_date = Column(DateTime)
+    purchase_date = Column(DateTime)
+    delivery_date = Column(DateTime)
     status = Column(Enum(OrderStatus))
     amount = Column(Float)
     createdAt = Column(DateTime, default=datetime.utcnow)
@@ -98,7 +99,8 @@ class AssesmentEntity(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     order_id = Column(Integer, ForeignKey('orders_tb.id'))
     employe_school_id = Column(Integer, ForeignKey('employeschool_tb.id'))
-    shipment_date = Column(DateTime)
+    purchase_date = Column(DateTime)
+    delivery_date = Column(DateTime)
 
 class StudentEntity(Base):
     __tablename__ = "students_tb"

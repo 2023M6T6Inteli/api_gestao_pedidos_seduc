@@ -1,3 +1,5 @@
+import random
+
 COURSES_MAPS = [ \
     {
         "code": "ESM6-2023",
@@ -200,4 +202,27 @@ TRANSPORTERS_MAPS = [ \
         "cep": "56789-012",
         "cnpj": "56.789.012/0002-56"
     }
+]
+
+ORDERS_MAPS = [ \
+    {"id": 1, "supplier_id": 1, "transporter_id": 1, "school_id": 1, "status": "Criado", "amount": 1000.00, "nf": "NF001", "nr": "NR001", "purchase_date": "2023-01-01", "employe_seduc_id": 1},
+    {"id": 2, "supplier_id": 2, "transporter_id": 2, "school_id": 2, "status": "Confirmado", "amount": 1500.00, "nf": "NF002", "nr": "NR002", "purchase_date": "2023-01-05", "employe_seduc_id": 2},
+    {"id": 3, "supplier_id": 3, "transporter_id": 3, "school_id": 3, "status": "Em Trânsito", "amount": 2000.00, "nf": "NF003", "nr": "NR003", "purchase_date": "2023-01-10", "employe_seduc_id": 1},
+    {"id": 4, "supplier_id": 4, "transporter_id": 4, "school_id": 4, "status": "Entregue", "amount": 2500.00, "nf": "NF004", "nr": "NR004", "purchase_date": "2023-01-15", "employe_seduc_id": 2},
+    {"id": 5, "supplier_id": 5, "transporter_id": 5, "school_id": 5, "status": "Avaliado", "amount": 3000.00, "nf": "NF005", "nr": "NR005", "purchase_date": "2023-01-20", "employe_seduc_id": 1},
+    {"id": 6, "supplier_id": 1, "transporter_id": 1, "school_id": 1, "status": "Criado", "amount": 3500.00, "nf": "NF006", "nr": "NR006", "purchase_date": "2023-01-25", "employe_seduc_id": 2},
+    {"id": 7, "supplier_id": 1, "transporter_id": 1, "school_id": 1, "status": "Criado", "amount": 4000.00, "nf": "NF007", "nr": "NR007", "purchase_date": "2023-03-05", "employe_seduc_id": 1},
+    {"id": 8, "supplier_id": 2, "transporter_id": 2, "school_id": 2, "status": "Confirmado", "amount": 4500.00, "nf": "NF008", "nr": "NR008", "purchase_date": "2023-03-10", "employe_seduc_id": 2},
+    {"id": 9, "supplier_id": 3, "transporter_id": 3, "school_id": 3, "status": "Em Trânsito", "amount": 5000.00, "nf": "NF009", "nr": "NR009", "purchase_date": "2023-03-15", "employe_seduc_id": 1},
+    {"id": 10, "supplier_id": 4, "transporter_id": 4, "school_id": 4, "status": "Entregue", "amount": 5500.00, "nf": "NF010", "nr": "NR010", "purchase_date": "2023-03-20", "employe_seduc_id": 2},
+    {"id": 11, "supplier_id": 5, "transporter_id": 5, "school_id": 5, "status": "Avaliado", "amount": 6000.00, "nf": "NF011", "nr": "NR011", "purchase_date": "2023-03-25", "employe_seduc_id": 1},
+    {"id": 12, "supplier_id": 1, "transporter_id": 1, "school_id": 1, "status": "Criado", "amount": 6500.00, "nf": "NF012", "nr": "NR012", "purchase_date": "2023-03-30", "employe_seduc_id": 2},
+    {"id": 13, "supplier_id": 2, "transporter_id": 2, "school_id": 2, "status": "Confirmado", "amount": 7000.00, "nf": "NF013", "nr": "NR013", "purchase_date": "2023-04-05", "employe_seduc_id": 1},
+    {"id": 14, "supplier_id": 3, "transporter_id": 3, "school_id": 3, "status": "Em Trânsito", "amount": 7500.00, "nf": "NF014", "nr": "NR014", "purchase_date": "2023-04-10", "employe_seduc_id": 2},
+    {"id": 15, "supplier_id": 4, "transporter_id": 4, "school_id": 4, "status": "Entregue", "amount": 8000.00, "nf": "NF015", "nr": "NR015", "purchase_date": "2023-04-15", "employe_seduc_id": 1},
+    {"id": 16, "supplier_id": 5, "transporter_id": 5, "school_id": 5, "status": "Avaliado", "amount": 8500.00, "nf": "NF016", "nr": "NR016", "purchase_date": "2023-04-20", "employe_seduc_id": 2},
+    {"id": 17, "supplier_id": 1, "transporter_id": 1, "school_id": 1, "status": "Criado", "amount": 9000.00, "nf": "NF017", "nr": "NR017", "purchase_date": "2023-04-25", "employe_seduc_id": 1},
+    {"id": 18, "supplier_id": 2, "transporter_id": 2, "school_id": 2, "status": "Confirmado", "amount": 9500.00, "nf": "NF018", "nr": "NR018", "purchase_date": "2023-04-30", "employe_seduc_id": 2},
+    {"id": 19, "supplier_id": 3, "transporter_id": 3, "school_id": 3, "status": "Em Trânsito", "amount": 10000.00, "nf": "NF019", "nr": "NR019", "purchase_date": "2023-05-05", "employe_seduc_id": 1},
+    {"id": 20, "supplier_id": 5, "transporter_id": 5, "school_id": 5, "status": "Avaliado", "amount": 5500.00, "nf": "NF020", "nr": "NR020", "purchase_date": "2023-02-28", "employe_seduc_id": 2}
 ]

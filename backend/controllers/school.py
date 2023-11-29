@@ -15,10 +15,10 @@ def create_school():
         success = SchoolServices.create_school(school_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar empregado: {e}")
+        #logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -29,10 +29,10 @@ def create_schools():
         success = SchoolServices.create_schools(schools_data)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar escolas: {e}")
+        #logging.error(f"Erro ao criar escolas: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @school_blueprint.route('/update_school/<int:id>', methods=['PUT'])
@@ -42,10 +42,10 @@ def update_school(id):
         success = SchoolServices.update_school(id, school_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao atualizar escola: {e}")
+        #logging.error(f"Erro ao atualizar escola: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @school_blueprint.route('/delete_school/<int:id>', methods=['DELETE'])
@@ -54,7 +54,7 @@ def delete_school(id):
         success = SchoolServices.delete_school(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        logging.error(f"Erro ao deletar escola: {e}")
+        #logging.error(f"Erro ao deletar escola: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @school_blueprint.route('/find_school_by_cnpj/<string:cnpj>', methods=['GET'])
@@ -66,7 +66,7 @@ def find_school_by_cnpj(cnpj):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar escola por CNPJ: {e}")
+        #logging.error(f"Erro ao buscar escola por CNPJ: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @school_blueprint.route('/find_school_by_id/<int:id>', methods=['GET'])
@@ -78,7 +78,7 @@ def find_school_by_id(id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar escola por ID: {e}")
+        #logging.error(f"Erro ao buscar escola por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -96,5 +96,5 @@ def find_all_schools():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar escolas: {e}")
+        #logging.error(f"Erro ao buscar escolas: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500

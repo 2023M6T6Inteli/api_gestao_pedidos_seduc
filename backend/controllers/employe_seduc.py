@@ -24,20 +24,22 @@ def find_all_employe_seducs():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar empregados: {e}")
+        #logging.error(f"Erro ao buscar empregados: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_seduc_blueprint.route('/create_employe_seduc', methods=['POST'])    
 def create_employe_seduc():
+
+     # Passa o mapa para a camada de serviços
     try:
         employe_seduc_map = json.loads(request.data)
         success = EmployeSeducServices.create_employe_seduc(employe_seduc_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar empregado: {e}")
+        #logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -48,10 +50,10 @@ def update_employe_seduc(id):
         success = EmployeSeducServices.update_employe_seduc(id, employe_seduc_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao atualizar empregado: {e}")
+        #logging.error(f"Erro ao atualizar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -61,7 +63,7 @@ def delete_employe_seduc(id):
         success = EmployeSeducServices.delete_employe_seduc(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        logging.error(f"Erro ao deletar empregado: {e}")
+        #logging.error(f"Erro ao deletar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_seduc_blueprint.route('/find_employe_by_cpf/<string:cpf>', methods=['GET'])
@@ -73,7 +75,7 @@ def find_employe_seduc_by_cpf(cpf):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar empregado por CPF: {e}")
+        #logging.error(f"Erro ao buscar empregado por CPF: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -86,9 +88,15 @@ def find_employe_seduc_by_id(id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar empregado por ID: {e}")
+        #logging.error(f"Erro ao buscar empregado por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
+
+##############################################################################################################
+
+ ###### PREENCHIMENTO DA PÁGINAS DE PEDIDOS E HISTÓRICO DE PEDIDOS ######
+
+##############################################################################################################
 
 @employe_seduc_blueprint.route('/orders', methods=['GET'])
 def find_orders_activate():
@@ -96,6 +104,7 @@ def find_orders_activate():
     try:
         orders = employe_seduc_services.find_all_orders_by_multiple_status(["Criado", "Confirmado", "Em Trânsito"])
         logging.debug("Passou try controller.")
+        logging.debug(orders)
         if orders:
             # Converte cada modelo Order em um dicionário
             logging.debug("Passou if orders, controllers.")
@@ -103,6 +112,8 @@ def find_orders_activate():
             # Converte a lista de dicionários em JSON
             return jsonify(orders_maps), 200
         else:
+            logging.debug("Passou else orders, controllers.")
+            logging.error("Erro ao buscar orders ativos: {e}")
             return {"status": "not found"}, 404
     except Exception as e:
         logging.error(f"Erro ao buscar orders ativos: {e}")
@@ -123,7 +134,7 @@ def find_orders_delivered():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar orders ativos: {e}")
+        #logging.error(f"Erro ao buscar orders ativos: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
                                
 

@@ -17,15 +17,15 @@ class SchoolDAO(BaseDAO):
         """
         Add a school to the Database
         """
-        logging.error(f"entrou create_school dao")
+        #logging.error(f"entrou create_school dao")
         entity = SchoolEntity(
             name = map_['name'],
             address = map_['address'],
             cep = map_['cep'],
             cnpj = map_['cnpj']
         )
-        logging.error(entity)
-        return logging.error(f"return dao"), self._session.add(entity)
+        #logging.error(entity)
+        return #logging.error(f"return dao"), self._session.add(entity)
     
     def create_schools(self, schools_data):
         """
@@ -173,7 +173,13 @@ class School:
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
-        return json.dumps(map_, indent=indent)
+        map_["status"] = self.status().to_dict()
+        for key, value in map_.items():
+            if isinstance(value, datetime):
+                map_[key] = value.isoformat()
+            elif isinstance(value, str):
+                map_[key] = value.encode('utf-8').decode('utf-8')
+        return json.dumps(map_, indent=indent, ensure_ascii=False)
 
     def to_map(self):
         return {

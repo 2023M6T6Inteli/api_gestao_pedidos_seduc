@@ -15,10 +15,10 @@ def create_supplier():
         success = SupplierServices.create_supplier(supplier_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar empregado: {e}")
+        #logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -29,10 +29,10 @@ def create_suppliers():
         success = SupplierServices.create_suppliers(suppliers_data)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao criar fornecedores: {e}")
+        #logging.error(f"Erro ao criar fornecedores: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @supplier_blueprint.route('/update_supplier/<int:id>', methods=['PUT'])
@@ -42,10 +42,10 @@ def update_supplier(id):
         success = SupplierServices.update_supplier(id, supplier_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        logging.error("JSON inválido recebido.")
+        #logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        logging.error(f"Erro ao atualizar fornecedor: {e}")
+        #logging.error(f"Erro ao atualizar fornecedor: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @supplier_blueprint.route('/delete_supplier/<int:id>', methods=['DELETE'])
@@ -54,7 +54,7 @@ def delete_supplier(id):
         success = SupplierServices.delete_supplier(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        logging.error(f"Erro ao deletar fornecedor: {e}")
+        #logging.error(f"Erro ao deletar fornecedor: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @supplier_blueprint.route('/find_supplier_by_cnpj/<string:cnpj>', methods=['GET'])
@@ -66,7 +66,7 @@ def find_supplier_by_cnpj(cnpj):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar fornecedor por CNPJ: {e}")
+        #logging.error(f"Erro ao buscar fornecedor por CNPJ: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @supplier_blueprint.route('/find_supplier_by_id/<int:id>', methods=['GET'])
@@ -78,7 +78,7 @@ def find_supplier_by_id(id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar fornecedor por ID: {e}")
+        #logging.error(f"Erro ao buscar fornecedor por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -96,5 +96,5 @@ def find_all_suppliers():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        logging.error(f"Erro ao buscar fornecedors: {e}")
+        #logging.error(f"Erro ao buscar fornecedors: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500

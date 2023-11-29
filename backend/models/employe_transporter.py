@@ -53,18 +53,18 @@ class EmployeTransporterDAO(BaseDAO):
             return False
 
     def find_all(self):
-        logging.error(f"entrou find_all dao")
+        #logging.error(f"entrou find_all dao")
         entities = self.find_all_entity()
-        logging.error(f"passou find_all dao")
+        #logging.error(f"passou find_all dao")
         return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
         """
         Finds an instance by id
         """
-        logging.error(f"entrou find_by_id dao")
+        #logging.error(f"entrou find_by_id dao")
         entity = self._find_entity_by_id(id)
-        logging.error(f"passou find_by_id dao", entity)
+        #logging.error(f"passou find_by_id dao", entity)
         if (entity):
             return self._build_model_from_entity(entity)
 
@@ -80,11 +80,11 @@ class EmployeTransporterDAO(BaseDAO):
     # -------------------------------------------------------------------------
 
     def find_all_entity(self):
-        logging.error(f"entrou find_all_entyty")
+        #logging.error(f"entrou find_all_entyty")
         return self._session.query(EmployeTransporterEntity).all()
 
     def _find_entity_by_id(self, id):
-        logging.error(f"entrou find_entity_by_id")
+        #logging.error(f"entrou find_entity_by_id")
         return self._session.query(EmployeTransporterEntity).filter(EmployeTransporterEntity.id == id).first()
 
     def _find_entity_by_cpf(self, cpf):
@@ -103,7 +103,7 @@ class EmployeTransporterDAO(BaseDAO):
             celular = entity.celular,
             transporter_id = entity.transporter_id,
         )
-        logging.error(f"passou build_model_from_entity,  employe_transporter: {employe_transporter}")
+        #logging.error(f"passou build_model_from_entity,  employe_transporter: {employe_transporter}")
         return employe_transporter
     
     def _build_models_from_entities(self, entities):
@@ -111,7 +111,7 @@ class EmployeTransporterDAO(BaseDAO):
         for entity in entities:
             employe_transporter = self._build_model_from_entity(entity)
             employe_transporters.append(employe_transporter)
-        logging.error(f"passou build_models_from_entities,  employe_transporters: {employe_transporters}")
+        #logging.error(f"passou build_models_from_entities,  employe_transporters: {employe_transporters}")
         return employe_transporters
 
     def _map_to_transporter_entities(self, transporter_ids):
@@ -200,7 +200,13 @@ class EmployeTransporter:
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
-        return json.dumps(map_, indent=indent)
+        map_["status"] = self.status().to_dict()
+        for key, value in map_.items():
+            if isinstance(value, datetime):
+                map_[key] = value.isoformat()
+            elif isinstance(value, str):
+                map_[key] = value.encode('utf-8').decode('utf-8')
+        return json.dumps(map_, indent=indent, ensure_ascii=False)
 
     def to_map(self):
         return {

@@ -7,15 +7,15 @@ class SupplierServices:
     def create_supplier(supplier_map):
         try:
             with supplier.SupplierDAO() as dao:
-                logging.error(f"dados recebidos: {supplier_map}")
+                #logging.error(f"dados recebidos: {supplier_map}")
                 dao.create_supplier(supplier_map)
-                logging.error(f"dadoa recebidos: {supplier_map}")
+                #logging.error(f"dadoa recebidos: {supplier_map}")
             return True
         except (ValueError, TypeError) as e:
-            logging.error(f"Erro de dados ao criar supplier: {e}")
+            #logging.error(f"Erro de dados ao criar supplier: {e}")
             return False
         except Exception as e:
-            logging.error(f"Erro inesperado SupplierService ao criar supplier: {e}")
+            #logging.error(f"Erro inesperado SupplierService ao criar supplier: {e}")
             return False
         
     def create_suppliers(suppliers_data):
@@ -24,10 +24,10 @@ class SupplierServices:
                 dao.create_suppliers(suppliers_data)
             return True
         except (ValueError, TypeError) as e:
-            logging.error(f"Erro de dados ao criar supplier: {e}")
+            #logging.error(f"Erro de dados ao criar supplier: {e}")
             return False
         except Exception as e:
-            logging.error(f"Erro inesperado ao criar suppliers: {e}")
+            #logging.error(f"Erro inesperado ao criar suppliers: {e}")
             return False
 
     def update_supplier(id, supplier_map):
@@ -36,10 +36,10 @@ class SupplierServices:
                 dao.update_supplier(id, supplier_map)
             return True
         except (ValueError, TypeError) as e:
-            logging.error(f"Erro de dados ao atualizar supplier: {e}")
+            #logging.error(f"Erro de dados ao atualizar supplier: {e}")
             return False
         except Exception as e:
-            logging.error(f"Erro inesperado ao atualizar supplier: {e}")
+            #logging.error(f"Erro inesperado ao atualizar supplier: {e}")
             return False
 
     def delete_supplier(id):
@@ -48,7 +48,7 @@ class SupplierServices:
                 dao.delete_supplier(id)
             return True
         except Exception as e:
-            logging.error(f"Erro ao deletar supplier: {e}")
+            #logging.error(f"Erro ao deletar supplier: {e}")
             return False
         
     def delete_all_suppliers():
@@ -57,7 +57,7 @@ class SupplierServices:
                 dao.delete_all_suppliers()
             return True
         except Exception as e:
-            logging.error(f"Erro ao deletar todas as escolas: {e}")
+            #logging.error(f"Erro ao deletar todas as escolas: {e}")
             return False
 
     def find_all(self):
@@ -66,7 +66,7 @@ class SupplierServices:
                 result = dao.find_all()
             return result
         except Exception as e:
-            logging.error(f"Erro ao buscar todos os suppliers: {e}")
+            #logging.error(f"Erro ao buscar todos os suppliers: {e}")
             return []
 
     def find_by_id(self, id):
@@ -74,7 +74,7 @@ class SupplierServices:
             with supplier.SupplierDAO() as dao:
                 return dao.find_by_id(id)
         except Exception as e:
-            logging.error(f"Erro ao buscar supplier por id: {e}")
+            #logging.error(f"Erro ao buscar supplier por id: {e}")
             return None
 
     def find_by_cnpj(self, cnpj):
@@ -82,6 +82,6 @@ class SupplierServices:
             with supplier.SupplierDAO() as dao:
                 return dao.find_by_cnpj(cnpj)
         except Exception as e:
-            logging.error(f"Erro ao buscar supplier por cnpj: {e}")
+            #logging.error(f"Erro ao buscar supplier por cnpj: {e}")
             return None
         

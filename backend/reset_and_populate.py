@@ -43,6 +43,10 @@ def main():
     for map in EMPLOYES_SUPPLIER_MAPS:
         with EmployeSupplierDAO() as mng:
             mng.create_employe_supplier(map)
+
+    for map in ORDERS_MAPS:
+        with OrderDAO() as mng:
+            mng.create_order(map)
     
 
 

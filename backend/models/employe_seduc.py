@@ -26,7 +26,7 @@ class EmployeSeducDAO(BaseDAO):
         return self._session.add(employe_seduc_entity)
     
     def update_employe_seduc(self, id, map_):
-        logging.error(f"entrou update_employe_seduc dao")
+        #logging.error(f"entrou update_employe_seduc dao")
         entity = self._find_entity_by_id(id)
         if entity:
             for key, value in map_.items():
@@ -164,7 +164,13 @@ class EmployeSeduc:
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
-        return json.dumps(map_, indent=indent)
+        map_["status"] = self.status().to_dict()
+        for key, value in map_.items():
+            if isinstance(value, datetime):
+                map_[key] = value.isoformat()
+            elif isinstance(value, str):
+                map_[key] = value.encode('utf-8').decode('utf-8')
+        return json.dumps(map_, indent=indent, ensure_ascii=False)
 
     def to_map(self):
         return {
