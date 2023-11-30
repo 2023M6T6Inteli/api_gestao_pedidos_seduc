@@ -25,7 +25,7 @@ class SchoolDAO(BaseDAO):
             cnpj = map_['cnpj']
         )
         #logging.error(entity)
-        return #logging.error(f"return dao"), self._session.add(entity)
+        return self._session.add(entity)
     
     def create_schools(self, schools_data):
         """

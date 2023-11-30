@@ -1,7 +1,6 @@
 import json
 import logging
 
-from models.supplier import SupplierDAO
 
 from .factories import *
 from .dao import BaseDAO
@@ -23,7 +22,6 @@ class TransporterDAO(BaseDAO):
             address = map_['address'],
             cep = map_['cep'],
             cnpj = map_['cnpj'],
-            supplier_id=map_.get('supplier_id')
         )
         return self._session.add(entity)
     
@@ -35,13 +33,10 @@ class TransporterDAO(BaseDAO):
                 address=map_['address'],
                 cep=map_['cep'],
                 cnpj=map_['cnpj'],
-                supplier_id=map_.get('supplier_id')
             )
             transporters_entities.append(entity)
 
         self._session.add_all(transporters_entities)
-    
-    # Entender como passo o supplier para ele??
 
     def update_transporter(self, id, map_):
         """
@@ -96,14 +91,6 @@ class TransporterDAO(BaseDAO):
         if (entity):
             return self._build_model_from_entity(entity)
         
-    def get_supplier(self, supplier_id):
-        supplier_dao = SupplierDAO()
-        if not supplier_id:
-            return None
-        with SupplierDAO() as supplier_dao:  # Inicializa o SupplierDAO aqui
-            supplier_entity = supplier_dao.find_by_id(supplier_id)
-            return supplier_entity
-
     # Private methods
     # -------------------------------------------------------------------------
 
@@ -117,18 +104,12 @@ class TransporterDAO(BaseDAO):
         """
         Build a Student model out of an entity
         """
-        supplier = self.get_supplier(entity.supplier_id)
         transporter = Transporter(
             id = entity.id,
             name = entity.name,
             address = entity.address,
             cep = entity.cep,
             cnpj = entity.cnpj,
-            supplier = supplier
-            # supplier_id = entity.supplier_id   
-            # Crio outra _build_ que contenha os relacionamentos?
-            # employes = entity.employes,
-            # orders = entity.orders
         )
         return transporter
     
@@ -144,14 +125,12 @@ class TransporterDAO(BaseDAO):
 
 class Transporter:
 
-    def __init__(self, id, name, address, cep, cnpj, supplier):
+    def __init__(self, id, name, address, cep, cnpj):
         self._id = id
         self._name = name
         self._address = address
         self._cep = cep
         self._cnpj = cnpj
-        self._supplier = supplier
-        # self._supplier_id = supplier_id
 
     def id(self):
         return self._id
@@ -183,29 +162,17 @@ class Transporter:
     def add_cep(self, cep):
         self._cep = cep
 
-    def supplier_id(self):
-        return self._supplier_id
-    
-    def add_supplier_id(self, supplier_id):
-        self._supplier_id = supplier_id
-
-    def supplier(self):
-        return self._supplier
-
     def jsonify(self, indent=2):
         map_ = self.to_map()
         return json.dumps(map_, indent=indent)
 
     def to_map(self):
-        supplier_map = self._supplier.to_map() if self._supplier else None
         return {
             "id": self.id(),
             "name": self.name(),
             "address": self.address(),
             "cep": self.cep(),
             "cnpj": self.cnpj(),
-            "supplier": supplier_map
-            # "supplier_id": self.supplier_id()
         }
     
     def employes(self, session=None, commit_on_exit=True, close_on_exit=True):

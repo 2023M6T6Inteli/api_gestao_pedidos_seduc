@@ -20,7 +20,7 @@ load_dotenv()
 #     return create_engine(conn_str, echo=DB_DEBUG_MODE)
 
 def get_engine():
-    conn_str = "postgresql://postgres:postgres123@learnlinkdb.ckoqome2x9x0.us-east-1.rds.amazonaws.com:5432/learnlinkdb?options=-c%20client_encoding=utf8"
+    conn_str = "postgresql://postgres:senha123@database-2.c86pb1hq4aoj.us-east-1.rds.amazonaws.com:5432/database-2"
     
     return create_engine(conn_str, echo=False, pool_size=10, max_overflow=20)
 

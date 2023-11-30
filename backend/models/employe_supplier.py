@@ -177,9 +177,9 @@ class EmployeSupplier:
     def add_password(self, password):
         self._password = password
 
-    # @property
-    # def supplier_id(self):
-    #     return self._supplier_id
+    @property
+    def supplier_id(self):
+        return self._supplier_id
 
     def add_supplier_id(self, supplier_id):
         self._supplier_id = supplier_id

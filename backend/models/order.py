@@ -122,19 +122,20 @@ class OrderDAO(BaseDAO):
         else:
             return False
         
-    # def find_all(self):
-    #     entities = self.find_all_entity()
-    #     return self._build_models_from_entities(entities)
-
     def find_all(self):
-        try:
-            logging.debug("entrou find_All na model orderDAO.")
-            explain_output, entities = self.find_all_entity()  # Desempacotando os dois retornos
-            logging.debug("passou entities e explain na model orderDAO.")
-            return self._build_models_from_entities(entities), explain_output
-        except Exception as e:
-            logging.error(f"Erro na model find_all orderDAO: {e}")
-            raise e
+        logging.error(f"entrou find_all dao")
+        entities = self.find_all_entity()
+        return self._build_models_from_entities(entities)
+
+    # def find_all(self):
+    #     try:
+    #         logging.debug("entrou find_All na model orderDAO.")
+    #         explain_output, entities = self.find_all_entity()  # Desempacotando os dois retornos
+    #         logging.debug("passou entities e explain na model orderDAO.")
+    #         return self._build_models_from_entities(entities), explain_output
+    #     except Exception as e:
+    #         logging.error(f"Erro na model find_all orderDAO: {e}")
+    #         raise e
 
     def find_by_id(self, id):
         """
@@ -145,13 +146,13 @@ class OrderDAO(BaseDAO):
             logging.debug("construindo models.")
             return self._build_model_from_entity(entity)
         
-    def find_by_id_with_dependencies(self, id):
-        """
-        Finds an instance by id with all dependencies loaded
-        """
-        entity = self._find_entity_by_id(id)
-        if (entity):
-            return self._build_model_from_entity_with_dependencies(entity)
+    # def find_by_id_with_dependencies(self, id):
+    #     """
+    #     Finds an instance by id with all dependencies loaded
+    #     """
+    #     entity = self._find_entity_by_id(id)
+    #     if (entity):
+    #         return self._build_model_from_entity_with_dependencies(entity)
 
     def find_by_nr(self, nr):
         """
@@ -239,38 +240,38 @@ class OrderDAO(BaseDAO):
 
 
         
-    # def _find_entity_by_id(self, id):
-    #     return self._session.query(OrderEntity).filter(OrderEntity.id == id).first()
     def _find_entity_by_id(self, id):
-        try:
-            logging.debug("entrou find_All_entity na model order.")
-            # Cria a consulta SQLAlchemy
-            query = self._session.query(OrderEntity).filter(OrderEntity.id == id)
-            logging.debug("passou query na model order.")
-            # Obtém a representação em string da consulta com EXPLAIN
-            explain_query = str(query.statement.compile(dialect=self._session.bind.dialect, compile_kwargs={"literal_binds": True}))
-            logging.error(f"explain_query: {explain_query}")
-            # Executar EXPLAIN na consulta
-            # explain_result = self._session.execute(f"EXPLAIN {explain_query}")
-            # logging.error(f"explain_result: {explain_result}")
-            # Criar uma lista para armazenar os resultados do EXPLAIN
-            # explain_output = []
-            # # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
-            # for row in explain_result:
-            #     explain_output.append(row)
-            # # Executar a consulta original e retornar os resultados do EXPLAIN para análise
-            result = query.first()
-            if result:
-                logging.info(f"Entidade encontrada com ID {id}")
-            else:
-                logging.warning(f"Nenhuma entidade encontrada com ID {id}")
-            # logging.error(f"explain_output: {explain_output}")
-            # Se você quiser retornar também os resultados da consulta original,
-            # descomente a linha abaixo e ajuste conforme necessário.
-            return result
-        except Exception as e:
-            logging.error(f"Erro na model find_all_entity order: {e}")
-            raise e
+        return self._session.query(OrderEntity).filter(OrderEntity.id == id).first()
+    # def _find_entity_by_id(self, id):
+    #     try:
+    #         logging.debug("entrou find_All_entity na model order.")
+    #         # Cria a consulta SQLAlchemy
+    #         query = self._session.query(OrderEntity).filter(OrderEntity.id == id)
+    #         logging.debug("passou query na model order.")
+    #         # Obtém a representação em string da consulta com EXPLAIN
+    #         explain_query = str(query.statement.compile(dialect=self._session.bind.dialect, compile_kwargs={"literal_binds": True}))
+    #         logging.error(f"explain_query: {explain_query}")
+    #         # Executar EXPLAIN na consulta
+    #         # explain_result = self._session.execute(f"EXPLAIN {explain_query}")
+    #         # logging.error(f"explain_result: {explain_result}")
+    #         # Criar uma lista para armazenar os resultados do EXPLAIN
+    #         # explain_output = []
+    #         # # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
+    #         # for row in explain_result:
+    #         #     explain_output.append(row)
+    #         # # Executar a consulta original e retornar os resultados do EXPLAIN para análise
+    #         result = query.first()
+    #         if result:
+    #             logging.info(f"Entidade encontrada com ID {id}")
+    #         else:
+    #             logging.warning(f"Nenhuma entidade encontrada com ID {id}")
+    #         # logging.error(f"explain_output: {explain_output}")
+    #         # Se você quiser retornar também os resultados da consulta original,
+    #         # descomente a linha abaixo e ajuste conforme necessário.
+    #         return result
+    #     except Exception as e:
+    #         logging.error(f"Erro na model find_all_entity order: {e}")
+    #         raise e
     
     def _find_entity_by_nr(self, nr):
         return self._session.query(OrderEntity).filter(OrderEntity.nr == nr).first()
@@ -311,8 +312,13 @@ class OrderDAO(BaseDAO):
     Query para preenchimentos dos feeds ('pedidos' e 'histórico' do usuário employe_Seduc), algumas querys dos outros users podem ser usado na tela do employe_Seduc como filtro.
     Por exemplo: para filtrar todos pedidos de fornecedor
     """
-    # def find_all_entity(self):
-    #     return self._session.query(OrderEntity).all()
+    def find_all_entity(self):
+        try:
+            logging.debug("entrou find_All_entity na model order.")
+            return self._session.query(OrderEntity).all()
+        except Exception as e:
+            logging.error(f"Erro na model find_all_entity order: {e}")
+            raise e
 
     # def find_all_entity(self):
     #     return self._session.query(OrderEntity)\
@@ -321,45 +327,45 @@ class OrderDAO(BaseDAO):
     #         .options(joinedload(OrderEntity.school))\
     #         .options(joinedload(OrderEntity.transporter))\
     #         .first()
-    #     # return self._session.query(OrderEntity).all()
+        # return self._session.query(OrderEntity).all()
 
-    def find_all_entity(self):
-        try:
-            logging.debug("entrou find_All_entity na model order.")
-            # Cria a consulta SQLAlchemy
-            query = self._session.query(OrderEntity)
-            logging.debug("passou query na model order.")
-            logging.error(f"query: {query}")
+    # def find_all_entity(self):
+    #     try:
+    #         logging.debug("entrou find_All_entity na model order.")
+    #         # Cria a consulta SQLAlchemy
+    #         query = self._session.query(OrderEntity)
+    #         logging.debug("passou query na model order.")
+    #         logging.error(f"query: {query}")
 
-            # Converte a consulta SQLAlchemy em uma string SQL
-            sql = str(query.statement.compile(dialect=self._session.bind.dialect))
+    #         # Converte a consulta SQLAlchemy em uma string SQL
+    #         sql = str(query.statement.compile(dialect=self._session.bind.dialect))
 
-            logging.error(f"sql: {sql}")
+    #         logging.error(f"sql: {sql}")
 
 
-            # Executar EXPLAIN na consulta
-            explain_result = self._session.execute(f"EXPLAIN {sql}")
+    #         # Executar EXPLAIN na consulta
+    #         explain_result = self._session.execute(f"EXPLAIN {sql}")
 
-            logging.error(f"explain_result: {explain_result}")
+    #         logging.error(f"explain_result: {explain_result}")
 
-            # Criar uma lista para armazenar os resultados do EXPLAIN
-            explain_output = []
+    #         # Criar uma lista para armazenar os resultados do EXPLAIN
+    #         explain_output = []
 
             
 
-            # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
-            for row in explain_result:
-                explain_output.append(row)
+    #         # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
+    #         for row in explain_result:
+    #             explain_output.append(row)
 
-            # Retorna os resultados do EXPLAIN para análise
-            # return explain_output
-            logging.error(f"explain_output: {explain_output}")
-            # Se você quiser retornar também os resultados da consulta original,
-            # descomente a linha abaixo e ajuste conforme necessário.
-            return explain_output, query.all()
-        except Exception as e:
-            logging.error(f"Erro na model find_all_entity order: {e}")
-            raise e
+    #         # Retorna os resultados do EXPLAIN para análise
+    #         # return explain_output
+    #         logging.error(f"explain_output: {explain_output}")
+    #         # Se você quiser retornar também os resultados da consulta original,
+    #         # descomente a linha abaixo e ajuste conforme necessário.
+    #         return explain_output, query.all()
+    #     except Exception as e:
+    #         logging.error(f"Erro na model find_all_entity order: {e}")
+    #         raise e
     
     def find_all_entities_by_status(self, status):
         return self._session.query(OrderEntity).filter(OrderEntity.status == status).all()

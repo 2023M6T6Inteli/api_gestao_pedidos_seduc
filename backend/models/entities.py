@@ -59,7 +59,6 @@ class SupplierEntity(Base):
     cnpj = Column(String(30))
 
     employes = relationship("EmployeSupplierEntity", backref="supplier")
-    transporters = relationship("TransporterEntity", backref="supplier")
     orders = relationship("OrderEntity", backref="supplier")
 
 class TransporterEntity(Base):
@@ -70,7 +69,6 @@ class TransporterEntity(Base):
     address = Column(String(50))
     cep = Column(String(30))
     cnpj = Column(String(30))
-    supplier_id = Column(Integer, ForeignKey('suppliers_tb.id'))
 
     employes = relationship("EmployeTransporterEntity", backref="transporter")
     orders = relationship("OrderEntity", backref="transporter")

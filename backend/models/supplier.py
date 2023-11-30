@@ -1,5 +1,5 @@
 import json
-
+import logging
 from .factories import *
 from .dao import BaseDAO
 from models.entities import *
@@ -15,13 +15,16 @@ class SupplierDAO(BaseDAO):
         """
         Add a supplier to the Database
         """
-        entity = SupplierEntity(
-            name = map_['name'],
-            address = map_['address'],
-            cep = map_['cep'],
-            cnpj = map_['cnpj']
-        )
-        return self._session.add(entity)
+        try:
+            entity = SupplierEntity(
+                name = map_['name'],
+                address = map_['address'],
+                cep = map_['cep'],
+                cnpj = map_['cnpj']
+            )
+            return self._session.add(entity), logging.info("Fornecedor inserido com sucesso!")
+        except Exception as e:
+            print(e)
     
     def create_suppliers(self, suppliers_data):
         suppliers_entities = []
@@ -85,9 +88,6 @@ class SupplierDAO(BaseDAO):
         if (entity):
             return self._build_model_from_entity(entity)
         
-    def find_transporter_by_supplier_id(self, supplier_id):
-        transporters = self._session.query(TransporterEntity).filter(TransporterEntity.supplier_id == supplier_id).all()
-        return [self._build_model_from_entity(transporter) for transporter in transporters]
         
 
     # Private methods
@@ -99,11 +99,7 @@ class SupplierDAO(BaseDAO):
     def _find_entity_by_id(self, id):
         return self._session.query(SupplierEntity).filter(SupplierEntity.id == id).first()
     
-    def find_entity_transporter_by_supplier_id(self, supplier_id):
-        transporters = self._session.query(TransporterEntity).filter(TransporterEntity.supplier_id == supplier_id).all()
-        if (transporters):
-            return transporters
-        return []
+
 
     def _build_model_from_entity(self, entity):
         """
@@ -173,10 +169,6 @@ class Supplier:
     def add_cep(self, cep):
         self._cep = cep
 
-    def get_transporters(self):
-        with SupplierDAO() as dao:
-            transporters = dao.find_transporter_by_supplier_id(self.id())
-            return [t.to_map() for t in transporters] 
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
@@ -196,7 +188,6 @@ class Supplier:
             "address": self.address(),
             "cep": self.cep(),
             "cnpj": self.cnpj(),
-            "transporters": self.get_transporters()
         }
     
     def employes(self, session=None, commit_on_exit=True, close_on_exit=True):
@@ -224,29 +215,6 @@ class Supplier:
             self._employes = [employe_dao._build_model_from_entity(e) for e in associated_entities]
         return self._employes
 
-    def transporters(self, session=None, commit_on_exit=True, close_on_exit=True):
-        """
-        Finds the associated transporters in the database
-        """
-        if hasattr(self, '_transporters'):
-            return self._transporters
-
-        if not self.id():
-            raise Exception("You need an id to get dependencies")
-
-        with SupplierDAO(session, commit_on_exit, close_on_exit) as dao:
-            # Obtain the entity of this model
-            entity = dao._find_entity_by_id(self.id())
-
-            # Finds the associated entities
-            associated_entities = entity.transporters
-
-            # Use the factory to get a manager of the associated entities
-            transporter_dao = TransporterDAOFactory.create(dao.session())
-
-            # A list of the models of the associated entities
-            self._transporters = [transporter_dao._build_model_from_entity(e) for e in associated_entities]
-        return self._transporters
 
     def orders(self, session=None, commit_on_exit=True, close_on_exit=True):
         """

@@ -31,79 +31,6 @@ STUDENTS_MAPS = [ \
     }
 ]
 
-EMPLOYES_SEDUC_MAPS = [ \
-    {
-        "name": "João Silva",
-        "cpf": "123.456.789-00",
-        "email": "joaosilva@email.com",
-        "password": "senha123",
-        "role": "Coordenador Pedagógico",
-        "celular": "(11) 98765-4321"
-    },
-    {
-        "name": "Maria Oliveira",
-        "cpf": "987.654.321-00",
-        "email": "mariaoliveira@email.com",
-        "password": "senha321",
-        "role": "Diretor Administrativo",
-        "celular": "(11) 97654-3210"
-    }
-]
-
-EMPLOYES_SCHOOL_MAPS = [ \
-{
-        "name": "Carlos Pereira",
-        "cpf": "234.567.890-11",
-        "email": "carlospereira@email.com",
-        "password": "escola123",
-        "school_id": 1
-    },
-    {
-        "name": "Ana Beatriz",
-        "cpf": "876.543.210-11",
-        "email": "anabeatriz@email.com",
-        "password": "escola321",
-        "school_id": 2
-    }
-]
-
-EMPLOYES_SUPPLIER_MAPS = [ \
-    {
-        "name": "Ricardo Mendes",
-        "cpf": "345.678.901-22",
-        "email": "ricardomendes@email.com",
-        "password": "fornecedor123",
-        "supplier_id": 1
-    },
-    {
-        "name": "Fernanda Gomes",
-        "cpf": "765.432.109-22",
-        "email": "fernandagomes@email.com",
-        "password": "fornecedor321",
-        "supplier_id": 2
-    }
-]
-
-
-EMPLOYES_TRANSPORTER_MAPS = [ \
-    {
-        "name": "Roberto Carvalho",
-        "cpf": "456.789.012-33",
-        "email": "robertocarvalho@email.com",
-        "password": "transporte123",
-        "transporter_id": 1,
-        "celular": "(11) 95432-6789"
-    },
-    {
-        "name": "Juliana Martins",
-        "cpf": "654.321.098-33",
-        "email": "julianamartins@email.com",
-        "password": "transporte321",
-        "transporter_id": 2,
-        "celular": "(11) 93210-8765"
-    }
-]
-
 SCHOOLS_MAPS = [ \
     {
         "name": "Escola Primária Sol Nascente",
@@ -203,6 +130,81 @@ TRANSPORTERS_MAPS = [ \
         "cnpj": "56.789.012/0002-56"
     }
 ]
+
+EMPLOYES_SEDUC_MAPS = [ \
+    {
+        "name": "João Silva",
+        "cpf": "123.456.789-00",
+        "email": "joaosilva@email.com",
+        "password": "senha123",
+        "role": "Coordenador Pedagógico",
+        "celular": "(11) 98765-4321"
+    },
+    {
+        "name": "Maria Oliveira",
+        "cpf": "987.654.321-00",
+        "email": "mariaoliveira@email.com",
+        "password": "senha321",
+        "role": "Diretor Administrativo",
+        "celular": "(11) 97654-3210"
+    }
+]
+
+EMPLOYES_SCHOOL_MAPS = [ \
+{
+        "name": "Carlos Pereira",
+        "cpf": "234.567.890-11",
+        "email": "carlospereira@email.com",
+        "password": "escola123",
+        "school_id": 3
+    },
+    {
+        "name": "Ana Beatriz",
+        "cpf": "876.543.210-11",
+        "email": "anabeatriz@email.com",
+        "password": "escola321",
+        "school_id": 2
+    }
+]
+
+EMPLOYES_SUPPLIER_MAPS = [ \
+    {
+        "name": "Ricardo Mendes",
+        "cpf": "345.678.901-22",
+        "email": "ricardomendes@email.com",
+        "password": "fornecedor123",
+        "supplier_id": 1
+    },
+    {
+        "name": "Fernanda Gomes",
+        "cpf": "765.432.109-22",
+        "email": "fernandagomes@email.com",
+        "password": "fornecedor321",
+        "supplier_id": 2
+    }
+]
+
+
+EMPLOYES_TRANSPORTER_MAPS = [ \
+    {
+        "name": "Roberto Carvalho",
+        "cpf": "456.789.012-33",
+        "email": "robertocarvalho@email.com",
+        "password": "transporte123",
+        "transporter_id": 1,
+        "celular": "(11) 95432-6789"
+    },
+    {
+        "name": "Juliana Martins",
+        "cpf": "654.321.098-33",
+        "email": "julianamartins@email.com",
+        "password": "transporte321",
+        "transporter_id": 2,
+        "celular": "(11) 93210-8765"
+    }
+]
+
+
 
 ORDERS_MAPS = [ \
     {"id": 1, "supplier_id": 1, "transporter_id": 1, "school_id": 1, "status": "Criado", "amount": 1000.00, "nf": "NF001", "nr": "NR001", "purchase_date": "2023-01-01", "employe_seduc_id": 1},
