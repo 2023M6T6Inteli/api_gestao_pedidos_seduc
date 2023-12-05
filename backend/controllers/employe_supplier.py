@@ -102,7 +102,7 @@ def find_employe_supplier_by_id(id):
 def find_orders_activate(supplier_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_supplier_services.find_all_orders_by_multiple_status_and_supplier_id(["Criado", "Confirmado", "Em Trânsito"], supplier_id)
+        orders = employe_supplier_services.find_all_orders_by_multiple_status_and_supplier_id(["Criado", "Confirmado", "Despachado"], supplier_id)
         if orders:
             # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]
@@ -119,7 +119,7 @@ def find_orders_activate(supplier_id):
 def find_orders_delivered(supplier_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_supplier_services.find_all_orders_by_multiple_status_and_supplier_id(["Entregue", "Cancelado"], supplier_id)
+        orders = employe_supplier_services.find_all_orders_by_multiple_status_and_supplier_id(["Entregue", "Avaliado"], supplier_id)
         if orders:
             # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]

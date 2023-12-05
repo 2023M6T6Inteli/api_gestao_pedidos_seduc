@@ -100,7 +100,7 @@ def find_employe_school_by_id(id):
 def find_orders_activate(school_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_school_services.find_all_orders_by_multiple_status_and_school_id(["Criado", "Confirmado", "Em Trânsito"], school_id)
+        orders = employe_school_services.find_all_orders_by_multiple_status_and_school_id(["Criado", "Confirmado", "Despachado"], school_id)
         if orders:
             # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]
@@ -117,7 +117,7 @@ def find_orders_activate(school_id):
 def find_orders_delivered(school_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_school_services.find_all_orders_by_multiple_status_and_school_id(["Entregue", "Cancelado"], school_id)
+        orders = employe_school_services.find_all_orders_by_multiple_status_and_school_id(["Entregue", "Avaliado"], school_id)
         if orders:
             # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]

@@ -102,7 +102,7 @@ def find_employe_seduc_by_id(id):
 def find_orders_activate():
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_seduc_services.find_all_orders_by_multiple_status(["Criado", "Confirmado", "Em Trânsito"])
+        orders = employe_seduc_services.find_all_orders_by_multiple_status(["Criado", "Confirmado", "Despachado"])
         logging.debug("Passou try controller.")
         logging.debug(orders)
         if orders:

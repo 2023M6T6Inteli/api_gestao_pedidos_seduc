@@ -80,7 +80,7 @@ class OrderEntity(Base):
     supplier_id = Column(Integer, ForeignKey('suppliers_tb.id'))
     employe_seduc_id = Column(Integer, ForeignKey('employeseduc_tb.id'))
     school_id = Column(Integer, ForeignKey('schools_tb.id'))    
-    transporter_id = Column(Integer, ForeignKey('transporters_tb.id'))
+    transporter_id = Column(Integer, ForeignKey('transporters_tb.id'), nullable=True)
     nf = Column(String(30), nullable=True)
     nr = Column(String(30), nullable=True)
     purchase_date = Column(DateTime)

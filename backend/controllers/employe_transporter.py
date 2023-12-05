@@ -100,7 +100,7 @@ def find_employe_transporter_by_id(id):
 def find_orders_activate(transporter_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_transporter_services.find_all_orders_by_multiple_status_and_transporter_id(["Criado", "Confirmado", "Em Trânsito"], transporter_id)
+        orders = employe_transporter_services.find_all_orders_by_multiple_status_and_transporter_id(["Criado", "Confirmado", "Despachado"], transporter_id)
         if orders:
             # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]
@@ -109,7 +109,7 @@ def find_orders_activate(transporter_id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar orders ativos: {e}")
+        logging.error(f"Erro ao buscar orders ativos: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -117,7 +117,7 @@ def find_orders_activate(transporter_id):
 def find_orders_delivered(transporter_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
-        orders = employe_transporter_services.find_all_orders_by_multiple_status_and_transporter_id(["Entregue", "Cancelado"], transporter_id)
+        orders = employe_transporter_services.find_all_orders_by_multiple_status_and_transporter_id(["Entregue", "Avaliado"], transporter_id)
         if orders:
             # Converte cada modelo Order em um dicionário
             orders_maps = [order.to_map() for order in orders]

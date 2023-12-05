@@ -72,12 +72,12 @@ class EmployeTransporterServices:
 
 
     def find_all_orders_by_multiple_status_and_transporter_id(self, status, transporter_id):
-        #logging.error(f"entrou no find_all_orders_by_multiple_status employe transporter service")
+        logging.error(f"entrou no find_all_orders_by_multiple_status employe transporter service")
         try:
             with order.OrderDAO() as dao:
-                #logging.error(f"entrou no with orders find_all_orders_by_multiple_status employe seduc service")
+                logging.error(f"entrou no with orders find_all_orders_by_multiple_status employe seduc service")
                 return dao.find_all_orders_by_multiple_status_and_transporter_id(status, transporter_id)
         except Exception as e:
-            #logging.error(f"Erro ao buscar orders por status: {e}")
+            logging.error(f"Erro ao buscar orders por status: {e}")
             return None
         

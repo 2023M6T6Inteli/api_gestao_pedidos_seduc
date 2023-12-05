@@ -7,15 +7,15 @@ class OrderServices:
     def create_order(order_map):
         try:
             with order.OrderDAO() as dao:
-                #logging.error(f"dados recebidos: {order_map}")
+                logging.error(f"dados recebidos: {order_map}")
                 dao.create_order(order_map)
-                #logging.error(f"dadoS recebidos: {order_map}")
+                logging.error(f"dadoS recebidos: {order_map}")
             return True
         except (ValueError, TypeError) as e:
-            #logging.error(f"Erro de dados ao criar order: {e}")
+            logging.error(f"Erro de dados ao criar order: {e}")
             return False
         except Exception as e:
-            #logging.error(f"Erro inesperado OrderService ao criar order: {e}")
+            logging.error(f"Erro inesperado OrderService ao criar order: {e}")
             return False
         
     def create_orders(orders_data):

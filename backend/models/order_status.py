@@ -3,7 +3,7 @@ import enum
 class OrderStatus(enum.Enum):
     Criado = "Criado"
     Confirmado = "Confirmado"
-    Em_Transito = "Em Trânsito"
+    Despachado = "Despachado"
     Entregue = "Entregue"
     Avaliado = "Avaliado"
     
