@@ -22,11 +22,11 @@ class EmployeSeducDAO(BaseDAO):
             role = map_['role'],
             celular = map_['celular'],
         )
-
+        logging.error(f"entrou create_employe_seduc dao")
         return self._session.add(employe_seduc_entity)
     
     def update_employe_seduc(self, id, map_):
-        #logging.error(f"entrou update_employe_seduc dao")
+        logging.error(f"entrou update_employe_seduc dao")
         entity = self._find_entity_by_id(id)
         if entity:
             for key, value in map_.items():
@@ -48,7 +48,9 @@ class EmployeSeducDAO(BaseDAO):
         return self._build_models_from_entities(entities)
 
     def find_by_id(self, id):
+        logging.error(f"entrou find_by_id dao")
         entity = self._find_entity_by_id(id)
+        logging.error(f"passou find_by_id dao")
         if (entity):
             return self._build_model_from_entity(entity)
 
@@ -64,13 +66,15 @@ class EmployeSeducDAO(BaseDAO):
         return self._session.query(EmployeSeducEntity).all()
 
     def _find_entity_by_id(self, id):
-        return self._session.query(EmployeSeducEntity).filter(EmployeSeducEntity.id == id).first()
+        logging.error(f"entrou _find_entity_by_id dao")
+        return self._session.query(EmployeSeducEntity).get(id)
 
     def _find_entity_by_cpf(self, cpf):
         result = self._session.query(EmployeSeducEntity).filter(EmployeSeducEntity.cpf == cpf).first()
         return result
 
     def _build_model_from_entity(self, entity):
+        logging.error(f"entrou _build_model_from_entity dao")
         """
         Build a EmployeSeduc model out of an entity
         """
@@ -164,7 +168,6 @@ class EmployeSeduc:
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
-        map_["status"] = self.status().to_dict()
         for key, value in map_.items():
             if isinstance(value, datetime):
                 map_[key] = value.isoformat()

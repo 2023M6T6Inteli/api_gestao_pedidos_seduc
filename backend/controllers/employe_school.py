@@ -3,6 +3,7 @@ from service.school_services import SchoolServices
 from service.employe_school_services import EmployeSchoolServices
 import json
 import logging
+from cache_config import cache  
 
 employe_school_services = EmployeSchoolServices()
 school_services = SchoolServices()
@@ -26,7 +27,7 @@ def find_all_employe_schools():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregados: {e}")
+        logging.error(f"Erro ao buscar empregados: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_school_blueprint.route('/create_employe_school', methods=['POST'])    
@@ -36,10 +37,10 @@ def create_employe_school():
         success = EmployeSchoolServices.create_employe_school(employe_school_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        #logging.error("JSON inválido recebido.")
+        logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        #logging.error(f"Erro ao criar empregado: {e}")
+        logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @employe_school_blueprint.route('/update_employe_school/<int:id>', methods=['PUT'])
@@ -49,10 +50,10 @@ def update_employe_school(id):
         success = EmployeSchoolServices.update_employe_school(id, employe_school_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        #logging.error("JSON inválido recebido.")
+        logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        #logging.error(f"Erro ao atualizar empregado: {e}")
+        logging.error(f"Erro ao atualizar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @employe_school_blueprint.route('/delete_employe_school/<int:id>', methods=['DELETE'])
@@ -61,7 +62,7 @@ def delete_employe_school(id):
         success = EmployeSchoolServices.delete_employe_school(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        #logging.error(f"Erro ao deletar empregado: {e}")
+        logging.error(f"Erro ao deletar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_school_blueprint.route('/find_employe_by_cpf/<string:cpf>', methods=['GET'])
@@ -73,7 +74,7 @@ def find_employe_school_by_cpf(cpf):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregado por CPF: {e}")
+        logging.error(f"Erro ao buscar empregado por CPF: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -86,7 +87,7 @@ def find_employe_school_by_id(id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregado por ID: {e}")
+        logging.error(f"Erro ao buscar empregado por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 ##############################################################################################################
@@ -109,7 +110,7 @@ def find_orders_activate(school_id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar orders ativos: {e}")
+        logging.error(f"Erro ao buscar orders ativos: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -126,5 +127,5 @@ def find_orders_delivered(school_id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar orders ativos: {e}")
+        logging.error(f"Erro ao buscar orders ativos: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500

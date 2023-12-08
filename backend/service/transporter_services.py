@@ -74,7 +74,7 @@ class TransporterServices:
             with transporter.TransporterDAO() as dao:
                 return dao.find_by_id(id)
         except Exception as e:
-            #logging.error(f"Erro ao buscar transporter por id: {e}")
+            logging.error(f"Erro ao buscar transporter por id: {e}")
             return None
 
     def find_by_cnpj(self, cnpj):

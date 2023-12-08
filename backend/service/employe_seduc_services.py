@@ -7,14 +7,16 @@ class EmployeSeducServices:
 
     def create_employe_seduc(employe_seduc_map):
         try:
+            logging.error(f"entrou no create_employe_seduc employe seduc service")
             with employe_seduc.EmployeSeducDAO() as dao:
+                logging.error(f"entrou no baseDAO employe seduc service")
                 dao.create_employe_seduc(employe_seduc_map)
             return True
         except (ValueError, TypeError) as e:
-            #logging.error(f"Erro de dados ao criar empregado: {e}")
+            logging.error(f"Erro de dados ao criar empregado: {e}")
             return False
         except Exception as e:
-            #logging.error(f"Erro inesperado ao criar empregado: {e}")
+            logging.error(f"Erro inesperado ao criar empregado: {e}")
             return False
 
     def update_employe_seduc(id, employe_seduc_map):
@@ -48,11 +50,13 @@ class EmployeSeducServices:
             return []
 
     def find_by_id(self, id):
+        logging.error(f"entrou no find_by_id employe seduc service")
         try:
             with employe_seduc.EmployeSeducDAO() as dao:
+                logging.error(f"entrou no baseDAO employe seduc service")
                 return dao.find_by_id(id)
         except Exception as e:
-            #logging.error(f"Erro ao buscar empregado por id: {e}")
+            logging.error(f"Erro ao buscar empregado por id: {e}")
             return None
 
     def find_by_cpf(self, cpf):

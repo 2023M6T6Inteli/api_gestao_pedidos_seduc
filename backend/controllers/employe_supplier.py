@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from service.employe_supplier_services import EmployeSupplierServices
 import json
 import logging
+from cache_config import cache
 
 employe_supplier_services = EmployeSupplierServices()
 
@@ -12,6 +13,7 @@ employe_supplier_blueprint = Blueprint('employe_supplier', __name__, url_prefix=
        CONTROLEERS employe Supplier
 """
 @employe_supplier_blueprint.route('/find_all_employes', methods=['GET'])
+@cache.cached(timeout=200)
 def find_all_employe_suppliers():
     try:
         logging.debug("Iniciando busca de todos os empregados da fornecedora.")
@@ -24,7 +26,7 @@ def find_all_employe_suppliers():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregados: {e}")
+        logging.error(f"Erro ao buscar empregados: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_supplier_blueprint.route('/create_employe_supplier', methods=['POST'])    
@@ -34,10 +36,10 @@ def create_employe_supplier():
         success = EmployeSupplierServices.create_employe_supplier(employe_supplier_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        #logging.error("JSON inválido recebido.")
+        logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        #logging.error(f"Erro ao criar empregado: {e}")
+        logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -48,10 +50,10 @@ def update_employe_supplier(id):
         success = EmployeSupplierServices.update_employe_supplier(id, employe_supplier_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        #logging.error("JSON inválido recebido.")
+        logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        #logging.error(f"Erro ao atualizar empregado: {e}")
+        logging.error(f"Erro ao atualizar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -61,7 +63,7 @@ def delete_employe_supplier(id):
         success = EmployeSupplierServices.delete_employe_supplier(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        #logging.error(f"Erro ao deletar empregado: {e}")
+        logging.error(f"Erro ao deletar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_supplier_blueprint.route('/find_employe_by_cpf/<string:cpf>', methods=['GET'])
@@ -73,11 +75,12 @@ def find_employe_supplier_by_cpf(cpf):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregado por CPF: {e}")
+        logging.error(f"Erro ao buscar empregado por CPF: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @employe_supplier_blueprint.route('/find_employe_by_id/<int:id>', methods=['GET'])
+@cache.cached(timeout=200)
 def find_employe_supplier_by_id(id):
     try:
         employe_supplier = employe_supplier_services.find_by_id(id)
@@ -86,7 +89,7 @@ def find_employe_supplier_by_id(id):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregado por ID: {e}")
+        logging.error(f"Erro ao buscar empregado por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -99,6 +102,7 @@ def find_employe_supplier_by_id(id):
 
 
 @employe_supplier_blueprint.route('/orders/<int:supplier_id>', methods=['GET'])
+@cache.cached(timeout=200)
 def find_orders_activate(supplier_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
@@ -116,6 +120,7 @@ def find_orders_activate(supplier_id):
     
 
 @employe_supplier_blueprint.route('/history/<int:supplier_id>', methods=['GET'])
+@cache.cached(timeout=200)
 def find_orders_delivered(supplier_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:

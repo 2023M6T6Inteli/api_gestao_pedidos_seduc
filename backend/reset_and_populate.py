@@ -15,18 +15,18 @@ def main():
     logger.info("Banco de dados recriado com sucesso.")
 
     # Enter Courses
-    logger.info("Inserindo cursos...")
-    for map in COURSES_MAPS:
-        with CourseDAO() as dao:
-            dao.create_course(map)
-    logger.info("Cursos inseridos.")
+    # logger.info("Inserindo cursos...")
+    # for map in COURSES_MAPS:
+    #     with CourseDAO() as dao:
+    #         dao.create_course(map)
+    # logger.info("Cursos inseridos.")
 
-    # Enter Students
-    logger.info("Inserindo estudantes...")
-    for map in STUDENTS_MAPS:
-        with StudentDAO() as mng:
-            mng.create_student(map)
-    logger.info("Estudantes inseridos.")
+    # # Enter Students
+    # logger.info("Inserindo estudantes...")
+    # for map in STUDENTS_MAPS:
+    #     with StudentDAO() as mng:
+    #         mng.create_student(map)
+    # logger.info("Estudantes inseridos.")
 
     logger.info("Inserindo suppliers...")
     for map in SUPPLIERS_MAPS:

@@ -173,7 +173,6 @@ class EmployeSchool:
 
     def jsonify(self, indent=2):
         map_ = self.to_map()
-        map_["status"] = self.status().to_dict()
         for key, value in map_.items():
             if isinstance(value, datetime):
                 map_[key] = value.isoformat()

@@ -2,16 +2,17 @@ from flask import Blueprint, request, jsonify
 from service.employe_seduc_services import EmployeSeducServices
 import json
 import logging
+from cache_config import cache
 
 employe_seduc_services = EmployeSeducServices()
 
 employe_seduc_blueprint = Blueprint('employe_seduc', __name__, url_prefix='/seduc')
 
-
 """
        CONTROLEERS employe Seduc
 """
 @employe_seduc_blueprint.route('/find_all_employes', methods=['GET'])
+@cache.cached(timeout=200)
 def find_all_employe_seducs():
     try:
         logging.debug("Iniciando busca de todos os empregados da SEDUC.")
@@ -24,7 +25,7 @@ def find_all_employe_seducs():
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregados: {e}")
+        logging.error(f"Erro ao buscar empregados: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_seduc_blueprint.route('/create_employe_seduc', methods=['POST'])    
@@ -36,10 +37,10 @@ def create_employe_seduc():
         success = EmployeSeducServices.create_employe_seduc(employe_seduc_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        #logging.error("JSON inválido recebido.")
+        logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        #logging.error(f"Erro ao criar empregado: {e}")
+        logging.error(f"Erro ao criar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -50,10 +51,10 @@ def update_employe_seduc(id):
         success = EmployeSeducServices.update_employe_seduc(id, employe_seduc_map)
         return jsonify({"status": "success" if success else "failed"}), 200
     except json.JSONDecodeError:
-        #logging.error("JSON inválido recebido.")
+        logging.error("JSON inválido recebido.")
         return jsonify({"status": "error", "message": "JSON inválido"}), 400
     except Exception as e:
-        #logging.error(f"Erro ao atualizar empregado: {e}")
+        logging.error(f"Erro ao atualizar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
@@ -63,7 +64,7 @@ def delete_employe_seduc(id):
         success = EmployeSeducServices.delete_employe_seduc(id)
         return jsonify({"status": "success" if success else "failed"}), 200
     except Exception as e:
-        #logging.error(f"Erro ao deletar empregado: {e}")
+        logging.error(f"Erro ao deletar empregado: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @employe_seduc_blueprint.route('/find_employe_by_cpf/<string:cpf>', methods=['GET'])
@@ -75,20 +76,23 @@ def find_employe_seduc_by_cpf(cpf):
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregado por CPF: {e}")
+        logging.error(f"Erro ao buscar empregado por CPF: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 
 @employe_seduc_blueprint.route('/find_employe_by_id/<int:id>', methods=['GET'])
+@cache.cached(timeout=200)
 def find_employe_seduc_by_id(id):
     try:
+        logging.debug("Iniciando busca de empregado por ID.")
         employe_seduc = employe_seduc_services.find_by_id(id)
+        logging.debug("Passou try controller.")
         if employe_seduc:
             return employe_seduc.jsonify(), 200
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar empregado por ID: {e}")
+        logging.error(f"Erro ao buscar empregado por ID: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
@@ -99,6 +103,7 @@ def find_employe_seduc_by_id(id):
 ##############################################################################################################
 
 @employe_seduc_blueprint.route('/orders', methods=['GET'])
+@cache.cached(timeout=200)
 def find_orders_activate():
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
@@ -109,6 +114,8 @@ def find_orders_activate():
             # Converte cada modelo Order em um dicionário
             logging.debug("Passou if orders, controllers.")
             orders_maps = [order.to_map() for order in orders]
+            logging.debug("Passou if orders_maps, controllers.")
+            logging.debug(orders_maps)
             # Converte a lista de dicionários em JSON
             return jsonify(orders_maps), 200
         else:
@@ -120,6 +127,7 @@ def find_orders_activate():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @employe_seduc_blueprint.route('/history', methods=['GET'])
+@cache.cached(timeout=200)
 def find_orders_delivered():
     logging.debug("Iniciando busca de todos os orders inativos.")
     try:
@@ -129,12 +137,14 @@ def find_orders_delivered():
             # Converte cada modelo Order em um dicionário
             logging.debug("Passou if orders, controllers.")
             orders_maps = [order.to_map() for order in orders]
+            logging.debug("Passou if orders_maps, controllers.")
+            logging.debug(orders_maps)
             # Converte a lista de dicionários em JSON
             return jsonify(orders_maps), 200
         else:
             return {"status": "not found"}, 404
     except Exception as e:
-        #logging.error(f"Erro ao buscar orders ativos: {e}")
+        logging.error(f"Erro ao buscar orders ativos: {e}")
         return jsonify({"status": "error", "message": str(e)}), 500
                                
 

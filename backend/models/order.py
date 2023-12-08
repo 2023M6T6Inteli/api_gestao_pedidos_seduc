@@ -242,36 +242,6 @@ class OrderDAO(BaseDAO):
         
     def _find_entity_by_id(self, id):
         return self._session.query(OrderEntity).filter(OrderEntity.id == id).first()
-    # def _find_entity_by_id(self, id):
-    #     try:
-    #         logging.debug("entrou find_All_entity na model order.")
-    #         # Cria a consulta SQLAlchemy
-    #         query = self._session.query(OrderEntity).filter(OrderEntity.id == id)
-    #         logging.debug("passou query na model order.")
-    #         # Obtém a representação em string da consulta com EXPLAIN
-    #         explain_query = str(query.statement.compile(dialect=self._session.bind.dialect, compile_kwargs={"literal_binds": True}))
-    #         logging.error(f"explain_query: {explain_query}")
-    #         # Executar EXPLAIN na consulta
-    #         # explain_result = self._session.execute(f"EXPLAIN {explain_query}")
-    #         # logging.error(f"explain_result: {explain_result}")
-    #         # Criar uma lista para armazenar os resultados do EXPLAIN
-    #         # explain_output = []
-    #         # # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
-    #         # for row in explain_result:
-    #         #     explain_output.append(row)
-    #         # # Executar a consulta original e retornar os resultados do EXPLAIN para análise
-    #         result = query.first()
-    #         if result:
-    #             logging.info(f"Entidade encontrada com ID {id}")
-    #         else:
-    #             logging.warning(f"Nenhuma entidade encontrada com ID {id}")
-    #         # logging.error(f"explain_output: {explain_output}")
-    #         # Se você quiser retornar também os resultados da consulta original,
-    #         # descomente a linha abaixo e ajuste conforme necessário.
-    #         return result
-    #     except Exception as e:
-    #         logging.error(f"Erro na model find_all_entity order: {e}")
-    #         raise e
     
     def _find_entity_by_nr(self, nr):
         return self._session.query(OrderEntity).filter(OrderEntity.nr == nr).first()
@@ -300,6 +270,25 @@ class OrderDAO(BaseDAO):
             school_entity = school_dao.find_by_id(school_id)
             return school_entity
         
+    def get_supplier_model(self, entity):
+        supplier_dao = SupplierDAO()
+        with SupplierDAO() as supplier_dao:
+            supplier_model = supplier_dao._build_model_from_entity(entity)
+            return supplier_model
+
+    def get_transporter_model(self, entity):
+        transporter_dao = TransporterDAO()
+        with TransporterDAO() as transporter_dao:
+            transporter_model = transporter_dao._build_model_from_entity(entity)
+            return transporter_model
+        
+    def get_school_model(self, entity):
+        school = entity.school_id
+        school_dao = SchoolDAO()
+        with SchoolDAO() as school_dao:
+            school_model = school_dao._build_model_from_entity(school)
+            return school_model
+        
     def get_employe_seduc(self, employe_seduc_id):
         employe_seduc_dao = EmployeSeducDAO()
         if not employe_seduc_id:
@@ -320,52 +309,6 @@ class OrderDAO(BaseDAO):
             logging.error(f"Erro na model find_all_entity order: {e}")
             raise e
 
-    # def find_all_entity(self):
-    #     return self._session.query(OrderEntity)\
-    #         .filter(OrderEntity.id == id)\
-    #         .options(joinedload(OrderEntity.supplier))\
-    #         .options(joinedload(OrderEntity.school))\
-    #         .options(joinedload(OrderEntity.transporter))\
-    #         .first()
-        # return self._session.query(OrderEntity).all()
-
-    # def find_all_entity(self):
-    #     try:
-    #         logging.debug("entrou find_All_entity na model order.")
-    #         # Cria a consulta SQLAlchemy
-    #         query = self._session.query(OrderEntity)
-    #         logging.debug("passou query na model order.")
-    #         logging.error(f"query: {query}")
-
-    #         # Converte a consulta SQLAlchemy em uma string SQL
-    #         sql = str(query.statement.compile(dialect=self._session.bind.dialect))
-
-    #         logging.error(f"sql: {sql}")
-
-
-    #         # Executar EXPLAIN na consulta
-    #         explain_result = self._session.execute(f"EXPLAIN {sql}")
-
-    #         logging.error(f"explain_result: {explain_result}")
-
-    #         # Criar uma lista para armazenar os resultados do EXPLAIN
-    #         explain_output = []
-
-            
-
-    #         # Iterar sobre os resultados do EXPLAIN e adicioná-los à lista
-    #         for row in explain_result:
-    #             explain_output.append(row)
-
-    #         # Retorna os resultados do EXPLAIN para análise
-    #         # return explain_output
-    #         logging.error(f"explain_output: {explain_output}")
-    #         # Se você quiser retornar também os resultados da consulta original,
-    #         # descomente a linha abaixo e ajuste conforme necessário.
-    #         return explain_output, query.all()
-    #     except Exception as e:
-    #         logging.error(f"Erro na model find_all_entity order: {e}")
-    #         raise e
     
     def find_all_entities_by_status(self, status):
         return self._session.query(OrderEntity).filter(OrderEntity.status == status).all()
@@ -412,11 +355,17 @@ class OrderDAO(BaseDAO):
         """
         Build a Orders model out of an entity
         """
-        logging.error(f"começou queries supplier, transporter...")
+        logging.error(f"começou queries supplier")
         supplier = self.get_supplier(entity.supplier_id)
+        logging.error(f"passou queries supplier")
+        logging.error(f"começou queries school")
         school = self.get_school(entity.school_id)
+        logging.error(f"começou queries transporter")
         transporter = self.get_transporter(entity.transporter_id)
-        logging.error(f"passou queries supplier, transporter...")
+        logging.error(f"começou build model.")
+
+
+
         order = Order(
             id = entity.id,
             nf = entity.nf,
@@ -425,9 +374,9 @@ class OrderDAO(BaseDAO):
             delivery_date = entity.delivery_date,
             status = entity.status,
             amount = entity.amount,
-            supplier = supplier,
-            school = school,
-            transporter= transporter,
+            supplier=supplier,
+            school=school,
+            transporter=transporter,            
             employe_seduc_id = entity.employe_seduc_id
             
             # supplier_id = entity.supplier_id,
@@ -448,16 +397,7 @@ class OrderDAO(BaseDAO):
             orders.append(order)
         return orders
     
-    # def _build_model_from_entity_with_dependencies(self, entity):
-    #     """
-    #     Build a Orders model out of an entity with all dependencies loaded
-    #     """
-    #     order = self._build_model_from_entity(entity)
-    #     order.employe_seduc = self.find_employe_seduc_by_id(entity.employe_seduc_id)
-    #     order.transporter = self.find_transporter_by_id(entity.transporter_id)
-    #     order.supplier = self.find_supplier_by_id(entity.supplier_id)
-    #     order.school = self.find_school_by_id(entity.school_id)
-    #     return order
+
 
 """ Model
 ================================================================================
@@ -574,6 +514,9 @@ class Order:
         supplier_map = self._supplier.to_map() if self._supplier else None
         school_map = self._school.to_map() if self._school else None
         transporter_map = self._transporter.to_map() if self._transporter else None
+
+
+
         return {
             "id": self.id(),
             "nf": self.nf(),
