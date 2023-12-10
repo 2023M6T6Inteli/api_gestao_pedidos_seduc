@@ -35,7 +35,6 @@ class EmployeSchoolServices:
                 dao.delete_employe_school(id)
             return True
         except Exception as e:
-            #logging.error(f"Erro ao deletar empregado: {e}")
             return False
 
     def find_all(self):
@@ -62,14 +61,7 @@ class EmployeSchoolServices:
         except Exception as e:
             logging.error(f"Erro ao buscar empregado por cpf: {e}")
             return None
-        
-##############################################################################################################
-
- ###### PREENCHIMENTO DA PÁGINAS DE PEDIDOS E HISTÓRICO DE PEDIDOS ######
-
-##############################################################################################################
-
-
+    
     def find_all_orders_by_multiple_status_and_school_id(self, status, school_id):
         #logging.error(f"entrou no find_all_orders_by_multiple_status employe school service")
         try:

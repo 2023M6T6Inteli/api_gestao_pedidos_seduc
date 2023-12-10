@@ -15,11 +15,9 @@ from controllers.order import order_blueprint
 
 
 app = Flask(__name__)
-# academic_services = AcademicServices()
 
 cache.init_app(app)
 
-# Chamando meus contrllers para aplicação principal
 app.register_blueprint(employe_seduc_blueprint)
 app.register_blueprint(employe_supplier_blueprint)
 app.register_blueprint(employe_transporter_blueprint)
@@ -32,8 +30,6 @@ app.register_blueprint(order_blueprint)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
     
-
-
 if __name__ == '__main__':
     app.run(debug=True)
     

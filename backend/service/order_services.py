@@ -7,9 +7,7 @@ class OrderServices:
     def create_order(order_map):
         try:
             with order.OrderDAO() as dao:
-                
-                dao.create_order(order_map)
-                
+                dao.create_order(order_map)   
             return True
         except (ValueError, TypeError) as e:
             logging.error(f"Erro de dados ao criar order: {e}")
@@ -24,10 +22,8 @@ class OrderServices:
                 dao.create_orders(orders_data)
             return True
         except (ValueError, TypeError) as e:
-            #logging.error(f"Erro de dados ao criar order: {e}")
             return False
         except Exception as e:
-            #logging.error(f"Erro inesperado ao criar orders: {e}")
             return False
 
     def update_order(id, order_map):
@@ -36,10 +32,8 @@ class OrderServices:
                 dao.update_order(id, order_map)
             return True
         except (ValueError, TypeError) as e:
-            #logging.error(f"Erro de dados ao atualizar order: {e}")
             return False
         except Exception as e:
-            #logging.error(f"Erro inesperado ao atualizar order: {e}")
             return False
 
     def delete_order(id):
@@ -48,7 +42,6 @@ class OrderServices:
                 dao.delete_order(id)
             return True
         except Exception as e:
-            #logging.error(f"Erro ao deletar order: {e}")
             return False
         
     def delete_all_orders():
@@ -57,7 +50,6 @@ class OrderServices:
                 dao.delete_all_orders()
             return True
         except Exception as e:
-            #logging.error(f"Erro ao deletar todas as escolas: {e}")
             return False
 
     def find_all(self):
@@ -85,15 +77,5 @@ class OrderServices:
             with order.OrderDAO() as dao:
                 return dao.get_details_by_id(id)
         except Exception as e:
-            #logging.error(f"Erro ao buscar details order por id: {e}")
             return None
-        
-
-    # def find_by_cnpj(self, cnpj):
-    #     try:
-    #         with order.OrderDAO() as dao:
-    #             return dao.find_by_cnpj(cnpj)
-    #     except Exception as e:
-    #         #logging.error(f"Erro ao buscar order por cnpj: {e}")
-    #         return None
         
