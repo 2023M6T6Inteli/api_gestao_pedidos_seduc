@@ -1,7 +1,8 @@
 import json
 import unittest
 from flask import Flask
-from app.controllers.supplier_controller import supplier_blueprint
+from backend.controllers.supplier import supplier_blueprint
+
 
 class SupplierControllerTests(unittest.TestCase):
 

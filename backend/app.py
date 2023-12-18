@@ -12,11 +12,17 @@ from controllers.supplier import supplier_blueprint
 from controllers.school import school_blueprint
 from controllers.transporter import transporter_blueprint
 from controllers.order import order_blueprint
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity, get_raw_jwt
+)
 
 
 app = Flask(__name__)
 
 cache.init_app(app)
+jwt = JWTManager(app)
+
 
 app.register_blueprint(employe_seduc_blueprint)
 app.register_blueprint(employe_supplier_blueprint)

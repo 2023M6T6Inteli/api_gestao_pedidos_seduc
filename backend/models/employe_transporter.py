@@ -75,6 +75,17 @@ class EmployeTransporterDAO(BaseDAO):
         entity = self._find_entity_by_cpf(cpf)
         if (entity):
             return self._build_model_from_entity(entity)
+        
+    def find_transporter_id(self, email):
+        try:
+            entity = self._session.query(EmployeTransporterEntity).filter_by(email=email).first()
+            if entity:
+                return entity.transporter_id
+            else:
+                return None  # Ou qualquer valor de retorno padrão que você desejar
+        except Exception as e:
+            logging.error(f"Erro inesperado ao buscar transporter_id: {e}")
+            return None 
 
     # Private methods
     # -------------------------------------------------------------------------

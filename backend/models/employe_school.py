@@ -1,4 +1,5 @@
 import json
+import logging
 
 from .factories import *
 from .dao import BaseDAO
@@ -59,6 +60,17 @@ class EmployeSchoolDAO(BaseDAO):
         entity = self._find_entity_by_cpf(cpf)
         if (entity):
             return self._build_model_from_entity(entity)
+        
+    def find_school_id(self, email):
+        try:
+            entity = self._session.query(EmployeSchoolEntity).filter_by(email=email).first()
+            if entity:
+                return entity.school_id
+            else:
+                return None  # Ou qualquer valor de retorno padrão que você desejar
+        except Exception as e:
+            logging.error(f"Erro inesperado ao buscar school_id: {e}")
+            return None 
 
     # Private methods
     # -------------------------------------------------------------------------

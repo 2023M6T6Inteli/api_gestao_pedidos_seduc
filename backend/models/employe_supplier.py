@@ -1,4 +1,5 @@
 import json
+import logging
 
 from .factories import *
 from .dao import BaseDAO
@@ -75,6 +76,17 @@ class EmployeSupplierDAO(BaseDAO):
         if (entity):
             return self._build_model_from_entity(entity)
 
+
+    def find_supplier_id(self, email):
+        try:
+            entity = self._session.query(EmployeSupplierEntity).filter_by(email=email).first()
+            if entity:
+                return entity.supplier_id
+            else:
+                return None  # Ou qualquer valor de retorno padrão que você desejar
+        except Exception as e:
+            logging.error(f"Erro inesperado ao buscar supplier_id: {e}")
+            return None 
     # Private methods
     # -------------------------------------------------------------------------
 
