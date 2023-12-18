@@ -12,13 +12,14 @@ from controllers.supplier import supplier_blueprint
 from controllers.school import school_blueprint
 from controllers.transporter import transporter_blueprint
 from controllers.order import order_blueprint
+from controllers.login import login_blueprint
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity, get_raw_jwt
+    JWTManager
 )
 
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'your_secret_key_here'
 
 cache.init_app(app)
 jwt = JWTManager(app)
@@ -32,6 +33,7 @@ app.register_blueprint(supplier_blueprint)
 app.register_blueprint(school_blueprint)
 app.register_blueprint(transporter_blueprint)
 app.register_blueprint(order_blueprint)
+app.register_blueprint(login_blueprint)
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 

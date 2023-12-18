@@ -127,15 +127,6 @@ class OrderDAO(BaseDAO):
         entities = self.find_all_entity()
         return self._build_models_from_entities(entities)
 
-    # def find_all(self):
-    #     try:
-    #         logging.debug("entrou find_All na model orderDAO.")
-    #         explain_output, entities = self.find_all_entity()  # Desempacotando os dois retornos
-    #         logging.debug("passou entities e explain na model orderDAO.")
-    #         return self._build_models_from_entities(entities), explain_output
-    #     except Exception as e:
-    #         logging.error(f"Erro na model find_all orderDAO: {e}")
-    #         raise e
 
     def find_by_id(self, id):
         """
@@ -146,13 +137,6 @@ class OrderDAO(BaseDAO):
             logging.debug("construindo models.")
             return self._build_model_from_entity(entity)
         
-    # def find_by_id_with_dependencies(self, id):
-    #     """
-    #     Finds an instance by id with all dependencies loaded
-    #     """
-    #     entity = self._find_entity_by_id(id)
-    #     if (entity):
-    #         return self._build_model_from_entity_with_dependencies(entity)
 
     def find_by_nr(self, nr):
         """
@@ -275,7 +259,7 @@ class OrderDAO(BaseDAO):
         with SupplierDAO() as supplier_dao:
             supplier_model = supplier_dao._build_model_from_entity(entity)
             return supplier_model
-
+        
     def get_transporter_model(self, entity):
         transporter_dao = TransporterDAO()
         with TransporterDAO() as transporter_dao:
@@ -283,10 +267,10 @@ class OrderDAO(BaseDAO):
             return transporter_model
         
     def get_school_model(self, entity):
-        school = entity.school_id
+        # school = entity.school_id
         school_dao = SchoolDAO()
         with SchoolDAO() as school_dao:
-            school_model = school_dao._build_model_from_entity(school)
+            school_model = school_dao._build_model_from_entity(entity)
             return school_model
         
     def get_employe_seduc(self, employe_seduc_id):
@@ -355,14 +339,12 @@ class OrderDAO(BaseDAO):
         """
         Build a Orders model out of an entity
         """
-        logging.error(f"começou queries supplier")
-        supplier = self.get_supplier(entity.supplier_id)
-        logging.error(f"passou queries supplier")
-        logging.error(f"começou queries school")
-        school = self.get_school(entity.school_id)
-        logging.error(f"começou queries transporter")
-        transporter = self.get_transporter(entity.transporter_id)
-        logging.error(f"começou build model.")
+        logging.error(f"entrou build model.", entity)
+
+        supplier = self.get_supplier_model(entity.supplier)
+        school = self.get_school_model(entity.school)
+        transporter = self.get_transporter_model(entity.transporter)
+
 
 
 
@@ -378,11 +360,6 @@ class OrderDAO(BaseDAO):
             school=school,
             transporter=transporter,            
             employe_seduc_id = entity.employe_seduc_id
-            
-            # supplier_id = entity.supplier_id,
-            # school_id = entity.school_id,
-            # transporter_id = entity.transporter_id,
-            # employe_seduc_id = entity.employe_seduc_id
         )
         logging.error(f"construiu model.")
         return order
@@ -417,11 +394,6 @@ class Order:
         self._school = school
         self._transporter = transporter
         self._employe_seduc_id = employe_seduc_id
-        # self._supplier_id = supplier_id
-        # self._school_id = school_id
-        # self._transporter_id = transporter_id
-        # self._employe_seduc_id = employe_seduc_id
-
 
     def id(self):
         return self._id
@@ -531,128 +503,3 @@ class Order:
             "employe_seduc_id": self.employe_seduc_id()
         }
     
-
-
-    # def find_school_by_id(self, school_id):
-    #     school_dao = SchoolDAO()
-    #     if not school_id:
-    #         return None
-    #     with SchoolDAO() as school_dao:
-    #         school_entity = school_dao.find_by_id(school_id)
-    #         return school_entity
-        
-    # def find_transporter_by_id(self, transporter_id):
-    #     transporter_dao = TransporterDAO()
-    #     if not transporter_id:
-    #         return None
-    #     with TransporterDAO() as transporter_dao:
-    #         transporter_entity = transporter_dao.find_by_id(transporter_id)
-    #         return transporter_entity
-        
-    
-    # def find_employe_seduc_by_id(self, employe_seduc_id):
-    #     employe_seduc_dao = EmployeSeducDAO()
-    #     if not employe_seduc_id:
-    #         return None
-    #     with EmployeSeducDAO() as employe_seduc_dao:
-    #         employe_seduc_entity = employe_seduc_dao.find_by_id(employe_seduc_id)
-    #         return employe_seduc_entity
-        
-
-    
-    # def employe_seduc(self, session=None, commit_on_exit=True, close_on_exit=True):
-    #     """
-    #     Finds the associated employes in the database
-    #     """
-    #     if hasattr(self, '_employes'):
-    #         return self._employes
-
-    #     if not self.id():
-    #         raise Exception("You need an id to get dependencies")
-
-    #     with OrderDAO(session, commit_on_exit, close_on_exit) as dao:
-    #         # Obtain the entity of this model
-    #         entity = dao._find_entity_by_id(self.id())
-
-    #         # Finds the associated entities
-    #         associated_entities = entity.employe_seduc_id
-
-    #         # Use the factory to get a manager of the associated entities
-    #         employe_seduc_dao = EmployeSeducDAOFactory.create(dao.session())
-
-    #         # A list of the models of the associated entities
-    #         # # Esse método transforma uma Entity em um Model. Isso é importante porque não podemos deixar um Entity ir pra camada de Negócios
-    #         self._employes = [employe_seduc_dao._build_model_from_entity(e) for e in associated_entities]
-    #     return self._employe_seduc_id
-
-    # def transporter(self, session=None, commit_on_exit=True, close_on_exit=True):
-    #     """
-    #     Finds the associated transporters in the database
-    #     """
-    #     if hasattr(self, '_transporters'):
-    #         return self._transporter_id
-
-    #     if not self.id():
-    #         raise Exception("You need an id to get dependencies")
-
-    #     with OrderDAO(session, commit_on_exit, close_on_exit) as dao:
-    #         # Obtain the entity of this model
-    #         entity = dao._find_entity_by_id(self.id())
-
-    #         # Finds the associated entities
-    #         associated_entities = entity.transporter_id
-
-    #         # Use the factory to get a manager of the associated entities
-    #         transporter_id_dao = TransporterDAOFactory.create(dao.session())
-
-    #         # A list of the models of the associated entities
-    #         self._transporters = [transporter_id_dao._build_model_from_entity(e) for e in associated_entities]
-    #     return self._transporter_id
-    
-    # def school(self, session=None, commit_on_exit=True, close_on_exit=True):
-    #     """
-    #     Finds the associated school in the database
-    #     """
-    #     if hasattr(self, '_school'):
-    #         return self._school_id
-
-    #     if not self.id():
-    #         raise Exception("You need an id to get dependencies")
-
-    #     with OrderDAO(session, commit_on_exit, close_on_exit) as dao:
-    #         # Obtain the entity of this model
-    #         entity = dao._find_entity_by_id(self.id())
-
-    #         # Finds the associated entities
-    #         associated_entities = entity.school_id
-
-    #         # Use the factory to get a manager of the associated entities
-    #         school_id_dao = SchoolDAOFactory.create(dao.session())
-
-    #         # A list of the models of the associated entities
-    #         self._school = [school_id_dao._build_model_from_entity(e) for e in associated_entities]
-    #     return self._school
-    
-    # def supplier(self, session=None, commit_on_exit=True, close_on_exit=True):
-    #     """
-    #     Finds the associated supplier in the database
-    #     """
-    #     if hasattr(self, '_supplier'):
-    #         return self._supplier_id
-
-    #     if not self.id():
-    #         raise Exception("You need an id to get dependencies")
-
-    #     with OrderDAO(session, commit_on_exit, close_on_exit) as dao:
-    #         # Obtain the entity of this model
-    #         entity = dao._find_entity_by_id(self.id())
-
-    #         # Finds the associated entities
-    #         associated_entities = entity.supplier_id
-
-    #         # Use the factory to get a manager of the associated entities
-    #         supplier_id_dao = SupplierDAOFactory.create(dao.session())
-
-    #         # A list of the models of the associated entities
-    #         self._supplier = [supplier_id_dao._build_model_from_entity(e) for e in associated_entities]
-    #     return self._supplier

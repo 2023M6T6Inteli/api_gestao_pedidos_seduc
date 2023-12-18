@@ -104,7 +104,7 @@ EMPLOYES_SEDUC_MAPS = [ \
     {
         "name": "João Silva",
         "cpf": "123.456.789-00",
-        "email": "joaosilva@email.com",
+        "email": "joaosilva@seduc.learnlink.com.br",
         "password": "senha123",
         "role": "Coordenador Pedagógico",
         "celular": "(11) 98765-4321"
@@ -112,7 +112,7 @@ EMPLOYES_SEDUC_MAPS = [ \
     {
         "name": "Maria Oliveira",
         "cpf": "987.654.321-00",
-        "email": "mariaoliveira@email.com",
+        "email": "mariaoliveira@seduc.learnlink.com.br",
         "password": "senha321",
         "role": "Diretor Administrativo",
         "celular": "(11) 97654-3210"
@@ -123,14 +123,14 @@ EMPLOYES_SCHOOL_MAPS = [ \
 {
         "name": "Carlos Pereira",
         "cpf": "234.567.890-11",
-        "email": "carlospereira@email.com",
+        "email": "carlospereira@school.learnlink.com.br",
         "password": "escola123",
         "school_id": 3
     },
     {
         "name": "Ana Beatriz",
         "cpf": "876.543.210-11",
-        "email": "anabeatriz@email.com",
+        "email": "anabeatriz@school.learnlink.com.br",
         "password": "escola321",
         "school_id": 2
     }
@@ -140,14 +140,14 @@ EMPLOYES_SUPPLIER_MAPS = [ \
     {
         "name": "Ricardo Mendes",
         "cpf": "345.678.901-22",
-        "email": "ricardomendes@email.com",
+        "email": "ricardomendes@supplier.learnlink.com.br",
         "password": "fornecedor123",
         "supplier_id": 1
     },
     {
         "name": "Fernanda Gomes",
         "cpf": "765.432.109-22",
-        "email": "fernandagomes@email.com",
+        "email": "fernandagomes@supplier.learnlink.com.br",
         "password": "fornecedor321",
         "supplier_id": 2
     }
@@ -158,7 +158,7 @@ EMPLOYES_TRANSPORTER_MAPS = [ \
     {
         "name": "Roberto Carvalho",
         "cpf": "456.789.012-33",
-        "email": "robertocarvalho@email.com",
+        "email": "robertocarvalho@transporter.learnlink.com.br",
         "password": "transporte123",
         "transporter_id": 1,
         "celular": "(11) 95432-6789"
@@ -166,7 +166,7 @@ EMPLOYES_TRANSPORTER_MAPS = [ \
     {
         "name": "Juliana Martins",
         "cpf": "654.321.098-33",
-        "email": "julianamartins@email.com",
+        "email": "julianamartins@transporter.learnlink.com.br",
         "password": "transporte321",
         "transporter_id": 2,
         "celular": "(11) 93210-8765"

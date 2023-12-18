@@ -43,7 +43,7 @@ class SchoolEntity(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(50))
-    address = Column(String(50))
+    address = Column(String(60))
     cep = Column(String(30))
     cnpj = Column(String(30))
 
@@ -156,7 +156,7 @@ class UserEntity(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(30))
     cpf = Column(String(50), unique=True)
-    email = Column(String(30))
+    email = Column(String(50))
     password = Column(String(30))
     createdAt = Column(DateTime, default=datetime.utcnow)
     updatedAt = Column(DateTime, onupdate=datetime.utcnow)
