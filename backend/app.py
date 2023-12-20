@@ -16,10 +16,13 @@ from controllers.login import login_blueprint
 from flask_jwt_extended import (
     JWTManager
 )
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['JWT_SECRET_KEY'] = 'your_secret_key_here'
+
 
 cache.init_app(app)
 jwt = JWTManager(app)
