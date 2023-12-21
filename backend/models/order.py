@@ -43,6 +43,8 @@ Cada classe e método tem um papel específico, trabalhando juntos para gerencia
 """
 import json
 import logging
+
+from flask import jsonify
 from models.employe_seduc import EmployeSeducDAO
 from models.school import SchoolDAO
 from models.transporter import TransporterDAO
@@ -53,10 +55,25 @@ from .factories import *
 from .dao import BaseDAO
 from models.entities import *
 from sqlalchemy.orm import joinedload
+# from models.entities import StatusComponenteConfirmarEntregaEntity
 
 """ DAO
 ================================================================================
 """
+
+
+# class StatusComponenteConfirmarEntegaDAO(BaseDAO):
+#     def iniciando_status(self,status):
+#         entity = StatusComponenteConfirmarEntregaEntity(
+#             status = status
+#         )
+#         return self._session.add(entity)
+    
+#     def update_status(self, status):
+#         entity = self._session.query(StatusComponenteConfirmarEntregaEntity).first()
+#         if entity:
+#             setattr(entity, 'status', status)
+#             return jsonify({"status": "ok"})
 
 class OrderDAO(BaseDAO):
 
@@ -64,6 +81,22 @@ class OrderDAO(BaseDAO):
         """
         Add a order to the Database
         """
+
+        if isinstance(map_['school_id'], str):
+                with SchoolDAO() as school_dao:
+                    school_id = school_dao.get_school_id_by_name(map_['school_id'])
+                    map_['school_id'] = school_id
+
+        if isinstance(map_['transporter_id'], str):
+            with TransporterDAO() as transporter_dao:
+                transporter_id = transporter_dao.get_transporter_id_by_name(map_['transporter_id'])
+                map_['transporter_id'] = transporter_id
+
+        if isinstance(map_['supplier_id'], str):
+            with SupplierDAO() as supplier_dao:
+                supplier_id = supplier_dao.get_supplier_id_by_name(map_['supplier_id'])
+                map_['supplier_id'] = supplier_id
+        
         entity = OrderEntity(
             nf = map_['nf'],
             nr =map_['nr'],
@@ -77,6 +110,33 @@ class OrderDAO(BaseDAO):
             transporter_id = map_.get('transporter_id')
         )
         return self._session.add(entity)
+    
+    # def create_order_by_name_of_entities(self, map_):
+    #     supplier_dao = SupplierDAO()
+    #     transpoerter_dao = TransporterDAO()
+    #     school_dao = SchoolDAO()
+
+    #     if not school_id:
+    #         return None
+    #     with SchoolDAO() as school_dao:
+    #         school_id = school_dao.get_school_id_by_name(map_['school_name'])
+    #         map_['school_id'] = school_id
+    #         return school_id
+        
+
+    #     entity = OrderEntity(
+    #             nf = map_['nf'],
+    #             nr =map_['nr'],
+    #             purchase_date = map_['purchase_date'],
+    #             delivery_date = map_.get('delivery_date'),
+    #             status = OrderStatus(map_['status']),
+    #             amount = map_['amount'],
+    #             school_id = map_['school_id'],
+    #             supplier_id = map_['supplier_id'],
+    #             employe_seduc_id = map_['employe_seduc_id'],
+    #             transporter_id = map_.get('transporter_id')
+    #     )
+    #     return self._session.add(entity)
     
     def create_orders(self, orders_data):
         orders_entities = []

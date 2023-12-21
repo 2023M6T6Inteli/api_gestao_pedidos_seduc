@@ -110,6 +110,14 @@ class OrderEntity(Base):
     school = relationship("SchoolEntity", backref=backref("orders_school", lazy='noload'), lazy='joined')
     transporter = relationship("TransporterEntity", backref=backref("orders_transporters", lazy='noload'), lazy='joined')
 
+# class StatusComponenteConfirmarEntregaEntity(Base):
+#     __tablename__ = 'status_componente_confirmar_entrega_tb'
+#     id = Column(Integer, primary_key=True)
+#     status = Column(Boolean, nullable=False)
+
+
+
+
 # class AssesmentEntity(Base):
 #     __tablename__ = 'assessments_tb'
 

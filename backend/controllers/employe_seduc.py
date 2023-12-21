@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from service.employe_seduc_services import EmployeSeducServices
 import json
 import logging
-from cache_config import cache
+# #from cache_config import cache
 
 employe_seduc_services = EmployeSeducServices()
 
@@ -12,7 +12,7 @@ employe_seduc_blueprint = Blueprint('employe_seduc', __name__, url_prefix='/sedu
        CONTROLEERS employe Seduc
 """
 @employe_seduc_blueprint.route('/find_all_employes', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_all_employe_seducs():
     try:
         logging.debug("Iniciando busca de todos os empregados da SEDUC.")
@@ -81,7 +81,7 @@ def find_employe_seduc_by_cpf(cpf):
 
 
 @employe_seduc_blueprint.route('/find_employe_by_id/<int:id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_employe_seduc_by_id(id):
     try:
         logging.debug("Iniciando busca de empregado por ID.")
@@ -103,7 +103,7 @@ def find_employe_seduc_by_id(id):
 ##############################################################################################################
 
 @employe_seduc_blueprint.route('/orders', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_orders_activate():
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
@@ -127,7 +127,7 @@ def find_orders_activate():
         return jsonify({"status": "error", "message": str(e)}), 500
     
 @employe_seduc_blueprint.route('/history', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_orders_delivered():
     logging.debug("Iniciando busca de todos os orders inativos.")
     try:

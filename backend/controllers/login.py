@@ -3,7 +3,7 @@ from service.login_services import LoginServices
 from service.order_services import OrderServices
 import json
 import logging
-from cache_config import cache
+#from cache_config import cache
 from flask_jwt_extended import (create_access_token)
 
 login_services = LoginServices()

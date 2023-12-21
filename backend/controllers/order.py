@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from service.order_services import OrderServices
 import json
 import logging
-from cache_config import cache
+#from cache_config import cache
 order_services = OrderServices()
 
 order_blueprint = Blueprint('order', __name__, url_prefix='/order')
@@ -102,7 +102,6 @@ def find_order_by_id(id):
 #         return jsonify({"status": "error", "message": str(e)}), 500
 
 @order_blueprint.route('/find_all_orders', methods=['GET'])
-@cache.cached(timeout=50000)
 def find_all_orders():
     try:
         logging.debug("Iniciando busca de todas fornecedors.")

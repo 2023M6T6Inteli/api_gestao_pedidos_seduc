@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from service.employe_transporter_services import EmployeTransporterServices
 import json
 import logging
-from cache_config import cache
+#from cache_config import cache
 employe_transporter_services = EmployeTransporterServices()
 
 employe_transporter_blueprint = Blueprint('employe_transporter', __name__, url_prefix='/transporter')
@@ -12,7 +12,7 @@ employe_transporter_blueprint = Blueprint('employe_transporter', __name__, url_p
        CONTROLEERS employe Transporter
 """
 @employe_transporter_blueprint.route('/find_all_employes', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_all_employe_transporters():
     try:
         logging.debug("Iniciando busca de todos os empregados da Transporter.")
@@ -78,7 +78,7 @@ def find_employe_transporter_by_cpf(cpf):
 
 
 @employe_transporter_blueprint.route('/find_employe_by_id/<int:id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_employe_transporter_by_id(id):
     try:
         employe_transporter = employe_transporter_services.find_by_id(id)
@@ -91,6 +91,8 @@ def find_employe_transporter_by_id(id):
         return jsonify({"status": "error", "message": str(e)}), 500
     
 
+
+
 ##############################################################################################################
 
  ###### PREENCHIMENTO DA PÁGINAS DE PEDIDOS E HISTÓRICO DE PEDIDOS ######
@@ -99,7 +101,7 @@ def find_employe_transporter_by_id(id):
 
 
 @employe_transporter_blueprint.route('/orders/<int:transporter_id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_orders_activate(transporter_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
@@ -117,7 +119,7 @@ def find_orders_activate(transporter_id):
     
 
 @employe_transporter_blueprint.route('/history/<int:transporter_id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_orders_delivered(transporter_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:

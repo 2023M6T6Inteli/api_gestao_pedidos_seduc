@@ -88,6 +88,14 @@ class SupplierDAO(BaseDAO):
         if (entity):
             return self._build_model_from_entity(entity)
         
+    def get_supplier_id_by_name(self, name):
+        """
+        Finds an instance by name
+        """
+        entity = self._session.query(SupplierEntity).filter(SupplierEntity.name == name).first()
+        if (entity):
+            return entity.id
+        
         
 
     # Private methods

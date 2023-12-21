@@ -91,6 +91,14 @@ class SchoolDAO(BaseDAO):
         entity = self._session.query(SchoolEntity).filter(SchoolEntity.cnpj == cnpj).first()
         if (entity):
             return self._build_model_from_entity(entity)
+        
+    def get_school_id_by_name(self, name):
+        """
+        Finds an instance by name
+        """
+        entity = self._session.query(SchoolEntity).filter(SchoolEntity.name == name).first()
+        if (entity):
+            return entity.id
 
     # Private methods
     # -------------------------------------------------------------------------

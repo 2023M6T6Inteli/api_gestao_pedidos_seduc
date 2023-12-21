@@ -3,7 +3,7 @@ from service.school_services import SchoolServices
 from service.employe_school_services import EmployeSchoolServices
 import json
 import logging
-from cache_config import cache  
+#from cache_config import cache  
 
 employe_school_services = EmployeSchoolServices()
 school_services = SchoolServices()

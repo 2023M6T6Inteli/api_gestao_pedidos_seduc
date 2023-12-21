@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from service.employe_supplier_services import EmployeSupplierServices
 import json
 import logging
-from cache_config import cache
+#from cache_config import cache
 
 employe_supplier_services = EmployeSupplierServices()
 
@@ -13,7 +13,7 @@ employe_supplier_blueprint = Blueprint('employe_supplier', __name__, url_prefix=
        CONTROLEERS employe Supplier
 """
 @employe_supplier_blueprint.route('/find_all_employes', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_all_employe_suppliers():
     try:
         logging.debug("Iniciando busca de todos os empregados da fornecedora.")
@@ -80,7 +80,7 @@ def find_employe_supplier_by_cpf(cpf):
 
 
 @employe_supplier_blueprint.route('/find_employe_by_id/<int:id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_employe_supplier_by_id(id):
     try:
         employe_supplier = employe_supplier_services.find_by_id(id)
@@ -102,7 +102,7 @@ def find_employe_supplier_by_id(id):
 
 
 @employe_supplier_blueprint.route('/orders/<int:supplier_id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_orders_activate(supplier_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:
@@ -120,7 +120,7 @@ def find_orders_activate(supplier_id):
     
 
 @employe_supplier_blueprint.route('/history/<int:supplier_id>', methods=['GET'])
-@cache.cached(timeout=6000)
+#@cache.cached(timeout=6000)
 def find_orders_delivered(supplier_id):
     logging.debug("Iniciando busca de todos os orders ativos.")
     try:

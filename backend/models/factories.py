@@ -96,3 +96,12 @@ class OrderDAOFactory:
     def create(session):
         from .order import OrderDAO
         return OrderDAO(session)
+    
+
+# class StatusComponenteConfirmarEntega:
+#     """
+#     Creates a dao
+#     """
+#     def create(session):
+#         from .entities import StatusComponenteConfirmarEntegaDAO
+#         return StatusComponenteConfirmarEntegaDAO(session)

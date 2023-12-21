@@ -2,7 +2,7 @@
 
 import logging
 from flask import Flask, request, jsonify
-from cache_config import cache
+# #from cache_config import cache
 # from service.academic_services import AcademicServices
 from controllers.employe_seduc import employe_seduc_blueprint
 from controllers.employe_supplier import employe_supplier_blueprint
@@ -24,7 +24,7 @@ CORS(app)
 app.config['JWT_SECRET_KEY'] = 'your_secret_key_here'
 
 
-cache.init_app(app)
+# cache.init_app(app)
 jwt = JWTManager(app)
 
 
